@@ -321,7 +321,41 @@ class NinModificationController extends Controller
                 }
 
                 if (!empty($updateData)) {
-                    $agentService->update($updateData);
+                    $isFailingNow = isset($updateData['status']) && $updateData['status'] === 'failed' && $agentService->status !== 'failed';
+
+                    if ($isFailingNow) {
+                        DB::beginTransaction();
+                        try {
+                            $agentService->update($updateData);
+
+                            $wallet = Wallet::where('user_id', $agentService->user_id)->lockForUpdate()->first();
+                            if ($wallet) {
+                                $wallet->increment('balance', $agentService->amount);
+
+                                Transaction::create([
+                                    'transaction_ref' => 'REF_' . $agentService->reference,
+                                    'user_id'         => $agentService->user_id,
+                                    'amount'          => $agentService->amount,
+                                    'performed_by'    => 'System Auto-Refund',
+                                    'description'     => "Refund for failed NIN Modification Request",
+                                    'type'            => 'credit',
+                                    'status'          => 'completed',
+                                    'metadata'        => [
+                                        'original_reference' => $agentService->reference,
+                                        'api_reason'         => $updateData['comment'] ?? 'Failed submission',
+                                    ],
+                                ]);
+                            }
+
+                            DB::commit();
+                        } catch (\Exception $e) {
+                            DB::rollBack();
+                            Log::error('NIN Modification Auto Refund Error', ['error' => $e->getMessage(), 'submission_id' => $agentService->id]);
+                            throw $e;
+                        }
+                    } else {
+                        $agentService->update($updateData);
+                    }
                 }
 
                 return back()->with('success', 'Status updated successfully. Current status: ' . ucfirst($agentService->status));

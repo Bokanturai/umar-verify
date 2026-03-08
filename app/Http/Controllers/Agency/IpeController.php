@@ -206,7 +206,41 @@ class IpeController extends Controller
                 $updateData['status'] = $this->normalizeStatus($apiResponse['status']);
             }
 
-            $agentService->update($updateData);
+            $isFailingNow = isset($updateData['status']) && $updateData['status'] === 'failed' && $agentService->status !== 'failed';
+
+            if ($isFailingNow) {
+                DB::beginTransaction();
+                try {
+                    $agentService->update($updateData);
+
+                    $wallet = Wallet::where('user_id', $agentService->user_id)->lockForUpdate()->first();
+                    if ($wallet) {
+                        $wallet->increment('balance', $agentService->amount);
+
+                        Transaction::create([
+                            'transaction_ref' => 'REF_' . $agentService->reference,
+                            'user_id'         => $agentService->user_id,
+                            'amount'          => $agentService->amount,
+                            'performed_by'    => 'System Auto-Refund',
+                            'description'     => "Refund for failed IPE Request",
+                            'type'            => 'credit',
+                            'status'          => 'completed',
+                            'metadata'        => [
+                                'original_reference' => $agentService->reference,
+                                'api_reason'         => $updateData['comment'] ?? 'Failed submission',
+                            ],
+                        ]);
+                    }
+
+                    DB::commit();
+                } catch (\Exception $e) {
+                    DB::rollBack();
+                    Log::error('IPE Auto Refund Error', ['error' => $e->getMessage(), 'submission_id' => $agentService->id]);
+                    throw $e;
+                }
+            } else {
+                $agentService->update($updateData);
+            }
 
             return back()->with('success', 'Status checked successfully. Current status: ' . $agentService->status);
 
@@ -281,7 +315,40 @@ class IpeController extends Controller
                             $updateData['status'] = $this->normalizeStatus($apiResponse['status']);
                         }
 
-                        $submission->update($updateData);
+                        $isFailingNow = isset($updateData['status']) && $updateData['status'] === 'failed' && $submission->status !== 'failed';
+
+                        if ($isFailingNow) {
+                            DB::beginTransaction();
+                            try {
+                                $submission->update($updateData);
+
+                                $wallet = Wallet::where('user_id', $submission->user_id)->lockForUpdate()->first();
+                                if ($wallet) {
+                                    $wallet->increment('balance', $submission->amount);
+
+                                    Transaction::create([
+                                        'transaction_ref' => 'REF_' . $submission->reference,
+                                        'user_id'         => $submission->user_id,
+                                        'amount'          => $submission->amount,
+                                        'performed_by'    => 'System Auto-Refund',
+                                        'description'     => "Refund for failed IPE Request",
+                                        'type'            => 'credit',
+                                        'status'          => 'completed',
+                                        'metadata'        => [
+                                            'original_reference' => $submission->reference,
+                                            'api_reason'         => $updateData['comment'] ?? 'Failed submission',
+                                        ],
+                                    ]);
+                                }
+
+                                DB::commit();
+                            } catch (\Exception $e) {
+                                DB::rollBack();
+                                Log::error('IPE Auto Refund Error in Batch', ['error' => $e->getMessage(), 'submission_id' => $submission->id]);
+                            }
+                        } else {
+                            $submission->update($updateData);
+                        }
                         $checked++;
                     }
                 } catch (\Exception $e) {

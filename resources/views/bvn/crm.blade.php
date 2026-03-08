@@ -1,5 +1,5 @@
 <x-app-layout>
-    <title>Arewa Smart - {{ $title ?? 'CRM Request Form' }}</title>
+    <title>Baya Jidda - {{ $title ?? 'CRM Request Form' }}</title>
     <div class="page-body">
         <div class="container-fluid">
             <div class="page-title mb-3">
@@ -18,7 +18,7 @@
                 <div class="col-xl-6 mb-4">
                     <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
                         <div class="card-header bg-primary text-white py-3">
-                            <h5 class="mb-0 fw-bold"><i class="bi bi-gear-wide-connected me-2"></i>BVN CRM Request</h5>
+                            <h5 class="mb-0 fw-bold text-white"><i class="bi bi-gear-wide-connected me-2"></i>BVN CRM Request</h5>
                         </div>
 
                         <div class="card-body p-4">
@@ -197,6 +197,7 @@
                                                         'resolved', 'successful' => 'success',
                                                         'processing'             => 'primary',
                                                         'rejected'               => 'danger',
+                                                        'failed'                 => 'danger',
                                                         'query'                  => 'info',
                                                         'remark'                 => 'secondary',
                                                         default                  => 'warning'
@@ -218,14 +219,24 @@
                                                             }
                                                         }
                                                     @endphp
-                                                    <button type="button"
-                                                            class="btn btn-sm btn-icon btn-outline-primary"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#commentModal"
-                                                            data-comment="{{ $submission->comment ?? 'No comment yet.' }}"
-                                                            data-file-url="{{ $fileUrl }}">
-                                                        <i class="bi bi-eye-fill"></i>
-                                                    </button>
+                                                    <div class="d-flex gap-2">
+                                                        <button type="button"
+                                                                class="btn btn-sm btn-icon btn-outline-primary"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#commentModal"
+                                                                data-comment="{{ $submission->comment ?? 'No comment yet.' }}"
+                                                                data-file-url="{{ $fileUrl }}">
+                                                            <i class="bi bi-eye-fill"></i>
+                                                        </button>
+
+                                                        @if($submission->status === 'pending' || $submission->status === 'processing' || $submission->status === 'query')
+                                                            <a href="{{ route('crm.check', $submission->id) }}" 
+                                                               class="btn btn-sm btn-icon btn-outline-info" 
+                                                               title="Check Status">
+                                                                <i class="bi bi-arrow-clockwise"></i>
+                                                            </a>
+                                                        @endif
+                                                    </div>
                                                 </td>
                                             </tr>
                                         @empty
@@ -301,4 +312,60 @@
     </style>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const fieldSelect = document.getElementById('crm_service_field');
+            const priceDisplay = document.getElementById('crm-field-price');
+            const descArea = document.getElementById('crm-field-description');
+
+            if (fieldSelect) {
+                fieldSelect.addEventListener('change', function() {
+                    let selectedOption = this.options[this.selectedIndex];
+                    let price = selectedOption.getAttribute('data-price');
+                    let description = selectedOption.getAttribute('data-description');
+
+                    if (price) {
+                        priceDisplay.textContent = '₦' + parseFloat(price).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                    } else {
+                        priceDisplay.textContent = '₦0.00';
+                    }
+
+                    if (description) {
+                        descArea.textContent = description;
+                    } else {
+                        descArea.textContent = '';
+                    }
+                });
+                fieldSelect.dispatchEvent(new Event('change'));
+            }
+
+            @if (session('status') && session('message'))
+                Swal.fire({
+                    icon: "{{ session('status') === 'success' ? 'success' : 'error' }}",
+                    title: "{{ session('status') === 'success' ? 'Success!' : 'Oops!' }}",
+                    text: "{{ session('message') }}",
+                    confirmButtonColor: '#3085d6',
+                });
+            @endif
+
+            @if (session('success'))
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: "{{ session('success') }}",
+                    confirmButtonColor: '#3085d6',
+                });
+            @endif
+
+            @if (session('error'))
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: "{{ session('error') }}",
+                    confirmButtonColor: '#d33',
+                });
+            @endif
+        });
+    </script>
 </x-app-layout>
