@@ -77,6 +77,7 @@ class ProfileController extends Controller
             'state' => ['required', 'string', 'max:20'],
             'lga' => ['required', 'string', 'max:20'],
             'address' => ['required', 'string'],
+            'birthdate' => ['required', 'date', 'before:today'],
             'bvn' => ['required', 'string', 'min:11', 'max:11'],
             'pin' => ['required', 'string', 'min:5', 'max:5', 'regex:/^[0-9]+$/'],
             'termsCheck' => ['required', 'accepted'],
@@ -93,6 +94,7 @@ class ProfileController extends Controller
             'state' => $request->state,
             'lga' => $request->lga,
             'address' => $request->address,
+            'birthdate' => $request->birthdate,
             'bvn' => $request->bvn,
             'pin' => $request->pin,
         ])->save();

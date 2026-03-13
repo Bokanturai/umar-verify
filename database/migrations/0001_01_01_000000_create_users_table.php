@@ -9,42 +9,54 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-   public function up(): void
-{
-    Schema::create('users', function (Blueprint $table) {
-        $table->id();
+    public function up(): void
+    {
+        Schema::create('users', function (Blueprint $table) {
+            $table->id();
 
-        $table->string('first_name', 50)->nullable();
-        $table->string('last_name', 50)->nullable();
-        $table->string('middle_name', 100)->nullable();
-        $table->string('email', 100)->unique();
-        $table->timestamp('email_verified_at')->nullable();
-        $table->string('password');
-        $table->string('pin')->nullable();
-        $table->string('phone_no', 20)->unique()->nullable();
-        $table->string('business_name', 50)->nullable();
-        $table->string('tin', 20)->nullable();
-        $table->string('state', 20)->nullable();
-        $table->string('lga', 20)->nullable();
-        $table->string('nearest_bus_stop', 50)->nullable();
-        $table->text('address')->nullable();
-        $table->string('referral_code')->nullable();
-        $table->decimal('referral_bonus', 15, 2)->default(0.0);
-        $table->bigInteger('referred_by')->nullable();
-        $table->bigInteger('claim_id')->default(0);
-        $table->dateTimeTz('deleted_at')->nullable();
-        $table->string('deleted_by')->nullable();
-        $table->string('approved_by')->nullable();
-        $table->string('bvn', 20)->nullable();
-        $table->string('nin', 20)->nullable();
-        $table->string('photo', 255)->nullable();
-        $table->enum('role', ['personal', 'agent', 'partner', 'business', 'staff', 'checker', 'super_admin'])->default('personal');
-        $table->enum('status', ['active', 'inactive', 'suspended', 'pending', 'query'])->default('active');
-        $table->datetime('last_login')->nullable();
-        $table->decimal('limit', 12, 2)->default(0.00);
-        $table->rememberToken();
-        $table->timestamps();
-    });
+            // Personal Information
+            $table->string('first_name', 50)->nullable();
+            $table->string('last_name', 50)->nullable();
+            $table->string('middle_name', 100)->nullable();
+            $table->string('email', 100)->unique();
+            $table->timestamp('email_verified_at')->nullable();
+            $table->string('phone_no', 20)->unique()->nullable();
+            $table->date('birthdate')->nullable();
+            $table->string('photo', 255)->nullable();
+            $table->string('profile_photo_url')->nullable();
+            
+            // Security & Auth
+            $table->string('password');
+            $table->string('pin')->nullable();
+            $table->string('bvn', 20)->nullable();
+            $table->string('nin', 20)->nullable();
+            $table->rememberToken();
+            $table->datetime('last_login')->nullable();
+
+            // Business & Identity
+            $table->string('business_name', 50)->nullable();
+            $table->string('tin', 20)->nullable();
+            $table->string('state', 20)->nullable();
+            $table->string('lga', 20)->nullable();
+            $table->string('nearest_bus_stop', 50)->nullable();
+            $table->text('address')->nullable();
+
+            // Referral & Roles
+            $table->enum('role', ['personal', 'agent', 'partner', 'business', 'staff', 'checker', 'super_admin'])->default('personal');
+            $table->enum('status', ['active', 'inactive', 'suspended', 'pending', 'query'])->default('active');
+            $table->string('referral_code')->nullable();
+            $table->decimal('referral_bonus', 15, 2)->default(0.0);
+            $table->bigInteger('referred_by')->nullable();
+            $table->decimal('limit', 12, 2)->default(0.00);
+            
+            // System & Tracking
+            $table->bigInteger('claim_id')->default(0);
+            $table->string('performed_by')->nullable();
+            $table->string('approved_by')->nullable();
+            $table->string('deleted_by')->nullable();
+            $table->dateTimeTz('deleted_at')->nullable();
+            $table->timestamps();
+        });
 
 
 

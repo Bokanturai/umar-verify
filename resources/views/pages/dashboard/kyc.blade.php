@@ -55,6 +55,15 @@
 									</div>
 								</div>
 
+                                	<div class="col-md-4">
+									<div class="form-floating">
+										<input type="date" class="form-control" id="dateOfBirth" name="birthdate"
+											value="{{ old('birthdate', Auth::user()->birthdate ?? '') }}" required
+											placeholder="Date of Birth">
+										<label for="dateOfBirth">Date of Birth</label>
+									</div>
+								</div>
+
 								<div class="col-md-12">
 									<div class="form-floating">
 										<input type="tel" class="form-control" id="phone_no" name="phone_no"

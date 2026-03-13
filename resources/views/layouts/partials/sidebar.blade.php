@@ -182,16 +182,16 @@
 }
 
 .sidebar-menu li a:hover {
-    background: rgba(0, 47, 186, 0.05);
-    color: #002fba;
+    background: rgba(27, 67, 50, 0.05);
+    color: #885c0a;
 }
 
 /* Active Menu Item */
 .sidebar-menu li.active > a,
 .sidebar-menu li a.active {
-    background: #002fba !important;
+    background: #885c0a !important;
     color: #ffffff !important;
-    box-shadow: 0 4px 12px rgba(0, 47, 186, 0.15);
+    box-shadow: 0 4px 12px rgba(27, 67, 50, 0.15);
 }
 
 .sidebar-menu li.active > a i,
@@ -221,7 +221,7 @@
 }
 
 .sidebar-menu .submenu ul li a:hover {
-    color: #002fba;
+    color: #885c0a;
     background: transparent;
     text-decoration: underline;
 }
@@ -247,7 +247,7 @@ function confirmLogout(event, formId) {
         text: "You will be logged out of your account.",
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: '#002fba',
+        confirmButtonColor: '#885c0a',
         cancelButtonColor: '#d33',
         confirmButtonText: 'Yes, logout!',
         cancelButtonText: 'Cancel'

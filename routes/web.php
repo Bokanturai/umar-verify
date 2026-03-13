@@ -211,9 +211,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     // BVN Services & CRM
-      Route::get('/bvn-crm', [BvncrmController::class, 'index'])->name('bvn-crm');
-        Route::post('/bvn-crm', [BvncrmController::class, 'store'])->name('crm.store');
-        Route::get('/bvn-crm/check/{id}', [BvncrmController::class, 'checkStatus'])->name('crm.check');
+    Route::get('/bvn-crm', [BvncrmController::class, 'index'])->name('bvn-crm');
+    Route::post('/bvn-crm', [BvncrmController::class, 'store'])->name('crm.store');
+    Route::get('/bvn-crm/check/{id}', [BvncrmController::class, 'checkStatus'])->name('crm.check');
 
     Route::get('/send-vnin', [BvnServicesController::class, 'index'])->name('send-vnin');
     Route::post('/send-vnin', [BvnServicesController::class, 'store'])->name('send-vnin.store');

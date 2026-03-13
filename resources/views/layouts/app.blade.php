@@ -9,6 +9,8 @@
     <meta name="author" content="Dreams Technologies">
     <meta name="robots" content="index, follow">
 
+      <title>Quick Slip - {{ $title ?? 'dashboard and services' }}</title>
+
     <!-- Favicon -->
     <link rel="icon" href="{{ asset('assets/img/logo/logo.png') }}" type="image/x-icon" />
     <link rel="shortcut icon" href="{{ asset('assets/img/logo/logo.png') }}" type="image/x-icon" />

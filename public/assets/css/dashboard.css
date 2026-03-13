@@ -18,49 +18,132 @@
 }
 
 @keyframes scroll-left {
-    0% {
-        transform: translateX(0);
-    }
-
-    100% {
-        transform: translateX(-100%);
-    }
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-100%); }
 }
 
 .scrolling-text-container:hover .scrolling-text {
     animation-play-state: paused;
 }
 
-/* Service Card Styles */
-.service-card {
-    transition: 0.2s ease;
-    border-radius: 14px !important;
+/* Redesigned Quick Services Section */
+.quick-services-header {
+    margin-bottom: 25px;
 }
 
-.service-card:hover {
-    transform: translateY(-3px);
+.quick-services-header h5 {
+    font-size: 1.2rem;
+    color: #1a1a1a;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
-/* Perfect grid spacing */
-.service-grid {
-    row-gap: 14px;
+.quick-services-header p {
+    font-size: 0.85rem;
+    color: #8c8c8c;
+    margin-bottom: 0;
 }
 
-/* Mobile Responsive - Reduce service box size */
-@media (max-width: 576px) {
-    .service-card .card-body {
-        padding: 0.7rem !important;
-    }
+.service-item-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    text-decoration: none !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 12px 5px;
+    border-radius: 16px;
+    height: 100%;
+    position: relative;
+}
 
-    .service-card h6 {
-        font-size: 12px !important;
-    }
+.service-item-wrapper:hover {
+    background-color: #f8f9fa;
+    transform: translateY(-5px);
+}
 
-    .service-card .avatar {
-        padding: 0.4rem !important;
-    }
+.service-item-wrapper:hover .icon-container {
+    transform: scale(1.05);
+    box-shadow: 0 8px 15px rgba(0,0,0,0.05);
+}
 
-    .service-card i {
-        font-size: 14px !important;
+.icon-container {
+    width: 60px;
+    height: 60px;
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+    transition: all 0.3s ease;
+    background-color: #fff;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+}
+
+.icon-container i {
+    font-size: 24px;
+}
+
+.service-text {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #444;
+    line-height: 1.2;
+    max-width: 100%;
+}
+
+/* Status Badge Styles */
+.status-badge-hot {
+    position: absolute;
+    top: 5px;
+    right: 15%;
+    background-color: #ff3b30;
+    color: white;
+    font-size: 0.65rem;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    z-index: 2;
+    box-shadow: 0 2px 4px rgba(255,59,48,0.3);
+    border: 2px solid #fff;
+}
+
+/* Service Color Schemes */
+.bg-soft-blue { background-color: #eef4ff !important; color: #3182ce !important; }
+.bg-soft-cyan { background-color: #e6fffa !important; color: #2c7a7b !important; }
+.bg-soft-yellow { background-color: #fffaf0 !important; color: #d69e2e !important; }
+.bg-soft-red { background-color: #fff5f5 !important; color: #e53e3e !important; }
+.bg-soft-green { background-color: #f0fff4 !important; color: #38a169 !important; }
+.bg-soft-purple { background-color: #faf5ff !important; color: #805ad5 !important; }
+.bg-soft-teal { background-color: #e6fffa !important; color: #319795 !important; }
+
+/* Responsive Grid Adjustments */
+@media (max-width: 768px) {
+    .icon-container {
+        width: 52px;
+        height: 52px;
+        border-radius: 15px;
+    }
+    .icon-container i {
+        font-size: 20px;
+    }
+    .service-text {
+        font-size: 0.75rem;
+    }
+    .status-badge-hot {
+        right: 10%;
+        font-size: 0.6rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .row.g-3 > [class*="col-"] {
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+    .service-item-wrapper {
+        padding: 10px 2px;
     }
 }

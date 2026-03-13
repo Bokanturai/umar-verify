@@ -106,8 +106,8 @@ function confirmLogout(event, formId) {
         text: "You will be logged out of your account.",
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: '#0d5c3e',
-        cancelButtonColor: '#d33',
+        confirmButtonColor: '#885c0a',
+        cancelButtonColor: '#AE2012',
         confirmButtonText: 'Yes, logout!',
         cancelButtonText: 'Cancel'
     }).then((result) => {

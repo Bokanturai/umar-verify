@@ -28,17 +28,17 @@
                             
                             <div class="d-grid gap-3">
                                 <!-- WhatsApp -->
-                                <a href="https://wa.me/+2347036826500" target="_blank" class="btn btn-outline-success border-2 fw-semibold d-flex align-items-center justify-content-center py-2">
+                                <a href="https://wa.me/+2347048932365" target="_blank" class="btn btn-outline-success border-2 fw-semibold d-flex align-items-center justify-content-center py-2">
                                     <i class="bi bi-whatsapp fs-5 me-2"></i> WhatsApp
                                 </a>
 
                                 <!-- Facebook -->
-                                <a href="https://www.facebook.com/katsinanews?mibextid=ZbWKwL" target="_blank" class="btn btn-outline-primary border-2 fw-semibold d-flex align-items-center justify-content-center py-2">
+                                <a href="#" target="_blank" class="btn btn-outline-primary border-2 fw-semibold d-flex align-items-center justify-content-center py-2">
                                     <i class="bi bi-facebook fs-5 me-2"></i> Facebook
                                 </a>
 
                                 <!-- TikTok -->
-                                <a href="https://www.tiktok.com/@ssafana?_r=1&_t=ZS-93SEZ246vAm" target="_blank" class="btn btn-outline-dark border-2 fw-semibold d-flex align-items-center justify-content-center py-2">
+                                <a href="#" target="_blank" class="btn btn-outline-dark border-2 fw-semibold d-flex align-items-center justify-content-center py-2">
                                     <i class="bi bi-tiktok fs-5 me-2"></i> TikTok
                                 </a>
 
@@ -50,7 +50,7 @@
 
                             <div class="mt-4 p-3 bg-light rounded-3 border">
                                 <h6 class="fw-bold text-primary mb-2"><i class="bi bi-envelope me-2"></i>Email Support</h6>
-                                <p class="small text-muted mb-0">support@imamdata.com.ng</p>
+                                <p class="small text-muted mb-0">help@quickslip.com.ng</p>
                             </div>
                         </div>
                     </div>

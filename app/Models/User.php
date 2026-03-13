@@ -31,6 +31,7 @@ class User extends Authenticatable implements MustVerifyEmail
         // Identity
         'bvn',
         'nin',
+        'birthdate',
         'tin',
         'state',
         'lga',

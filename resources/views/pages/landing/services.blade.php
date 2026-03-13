@@ -6,9 +6,9 @@
 
         <div class="container">
             <div class="section-title text-center mb-5" data-aos="fade-up">
-                <h4 style="color: #002fba; font-weight: 600; letter-spacing: 2px; text-transform: uppercase;">What We Do</h4>
+                <h4 style="color: #885c0a; font-weight: 600; letter-spacing: 2px; text-transform: uppercase;">What We Do</h4>
                 <h2 style="color: #111827; font-weight: 800; font-size: 2.5rem;">Our Premium Services</h2>
-                <hr style="width: 60px; height: 3px; background: #002fba; margin: 15px auto; border: none;">
+                <hr style="width: 60px; height: 3px; background: #CBA135; margin: 15px auto; border: none;">
                 <p class="mt-3 text-muted" style="max-width: 600px; margin: 0 auto; font-size: 1.1rem;">
                     We deliver cutting-edge solutions designed to elevate your business and streamline your operations.
                 </p>
@@ -110,15 +110,15 @@
                 left: 0;
                 width: 100%;
                 height: 0;
-                background: linear-gradient(135deg, #002fba 0%, #001f7a 100%);
-                transition: all 0.4s ease;
+                background: linear-gradient(135deg, #885c0a 0%, #6b4908 100%);
+                transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
                 z-index: -1;
                 border-radius: 20px;
             }
 
             .service-card-premium:hover {
                 transform: translateY(-10px);
-                box-shadow: 0 20px 40px rgba(0, 47, 186, 0.2);
+                box-shadow: 0 20px 40px rgba(27, 67, 50, 0.2);
             }
 
             .service-card-premium:hover::before {
@@ -128,7 +128,7 @@
             .icon-wrapper {
                 width: 70px;
                 height: 70px;
-                background: rgba(0, 47, 186, 0.1);
+                background: rgba(136, 92, 10, 0.1);
                 border-radius: 50%;
                 display: flex;
                 align-items: center;
@@ -138,18 +138,14 @@
             }
 
             .icon-wrapper i {
-                font-size: 30px;
-                color: #002fba;
+                font-size: 1.8rem;
+                color: #885c0a;
                 transition: all 0.4s ease;
-            }
-
-            .service-card-premium:hover .icon-wrapper {
-                background: rgba(255, 255, 255, 0.2);
             }
 
             .service-card-premium:hover .icon-wrapper i {
                 color: #fff;
-                transform: scale(1.1);
+                transform: rotateY(360deg);
             }
 
             .service-card-premium h3 {
@@ -176,7 +172,7 @@
             }
 
             .service-link {
-                color: #002fba;
+                color: #885c0a;
                 font-weight: 600;
                 text-decoration: none;
                 display: inline-flex;

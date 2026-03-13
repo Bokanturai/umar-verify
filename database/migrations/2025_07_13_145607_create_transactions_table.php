@@ -21,6 +21,7 @@ return new class extends Migration {
             $table->string('description')->nullable();
             $table->enum('type', ['credit', 'debit', 'refund', 'chargeback']);
             $table->enum('status', ['pending', 'completed', 'failed', 'reversed', 'rejected', 'query'])->default('pending');
+            $table->string('service_type')->nullable();
             $table->json('metadata')->nullable(); 
             $table->timestamps();
             
