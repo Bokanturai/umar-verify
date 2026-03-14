@@ -82,4 +82,12 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasOne(Wallet::class);
     }
+
+    /**
+     * Relationship: A user has many referrals
+     */
+    public function referrals()
+    {
+        return $this->hasMany(User::class, 'referred_by');
+    }
 }

@@ -93,10 +93,17 @@
 
                 <!-- Account Section -->
                 <li class="menu-title"><span>Account</span></li>
+
+                
                 
                 <li @class(['active' => Request::is('profile*')])>
                     <a href="{{ route('profile.edit') }}" @class(['active' => Request::is('profile*')])>
                         <i class="ti ti-settings-2"></i><span>Settings</span>
+                    </a>
+                </li>
+                <li>
+                     <a href="{{ route('refferal') }}" @class(['active' => Request::is('refferal*')])>
+                        <i class="ti ti-users-group"></i><span>Referral</span>
                     </a>
                 </li>
                 

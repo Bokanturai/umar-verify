@@ -27,123 +27,72 @@
 }
 
 /* Redesigned Quick Services Section */
-.quick-services-header {
-    margin-bottom: 25px;
+.bg-primary-soft { background-color: rgba(13, 110, 253, 0.1) !important; color: #0d6efd !important; }
+.bg-info-soft { background-color: rgba(13, 202, 240, 0.1) !important; color: #0dcaf0 !important; }
+.bg-warning-soft { background-color: rgba(255, 193, 7, 0.1) !important; color: #ffc107 !important; }
+.bg-danger-soft { background-color: rgba(220, 53, 69, 0.1) !important; color: #dc3545 !important; }
+.bg-success-soft { background-color: rgba(25, 135, 84, 0.1) !important; color: #198754 !important; }
+.bg-secondary-soft { background-color: rgba(108, 117, 125, 0.1) !important; color: #6c757d !important; }
+
+@keyframes pulse-red {
+    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7); }
+    70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(220, 53, 69, 0); }
+    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(220, 53, 69, 0); }
 }
 
-.quick-services-header h5 {
-    font-size: 1.2rem;
-    color: #1a1a1a;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+.service-item {
+    display: block;
+    transition: all 0.3s ease;
+    border-radius: 15px;
 }
 
-.quick-services-header p {
-    font-size: 0.85rem;
-    color: #8c8c8c;
-    margin-bottom: 0;
-}
-
-.service-item-wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    text-decoration: none !important;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    padding: 12px 5px;
-    border-radius: 16px;
-    height: 100%;
-    position: relative;
-}
-
-.service-item-wrapper:hover {
+.service-item:hover {
     background-color: #f8f9fa;
-    transform: translateY(-5px);
+    transform: translateY(-3px);
 }
 
-.service-item-wrapper:hover .icon-container {
-    transform: scale(1.05);
-    box-shadow: 0 8px 15px rgba(0,0,0,0.05);
+.service-content {
+    border-radius: 15px;
 }
 
-.icon-container {
-    width: 60px;
-    height: 60px;
-    border-radius: 18px;
+.service-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 12px;
     transition: all 0.3s ease;
-    background-color: #fff;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.02);
 }
 
-.icon-container i {
-    font-size: 24px;
-}
-
-.service-text {
-    font-size: 0.85rem;
+.service-name {
+    font-size: 11px;
     font-weight: 600;
-    color: #444;
+    display: block;
     line-height: 1.2;
-    max-width: 100%;
+    margin-top: 5px;
 }
 
-/* Status Badge Styles */
-.status-badge-hot {
-    position: absolute;
-    top: 5px;
-    right: 15%;
-    background-color: #ff3b30;
-    color: white;
-    font-size: 0.65rem;
-    font-weight: 800;
-    padding: 2px 6px;
-    border-radius: 20px;
-    text-transform: uppercase;
-    z-index: 2;
-    box-shadow: 0 2px 4px rgba(255,59,48,0.3);
-    border: 2px solid #fff;
-}
-
-/* Service Color Schemes */
-.bg-soft-blue { background-color: #eef4ff !important; color: #3182ce !important; }
-.bg-soft-cyan { background-color: #e6fffa !important; color: #2c7a7b !important; }
-.bg-soft-yellow { background-color: #fffaf0 !important; color: #d69e2e !important; }
-.bg-soft-red { background-color: #fff5f5 !important; color: #e53e3e !important; }
-.bg-soft-green { background-color: #f0fff4 !important; color: #38a169 !important; }
-.bg-soft-purple { background-color: #faf5ff !important; color: #805ad5 !important; }
-.bg-soft-teal { background-color: #e6fffa !important; color: #319795 !important; }
-
-/* Responsive Grid Adjustments */
-@media (max-width: 768px) {
-    .icon-container {
-        width: 52px;
-        height: 52px;
-        border-radius: 15px;
+@media (min-width: 768px) {
+    .service-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 16px;
     }
-    .icon-container i {
-        font-size: 20px;
+    .service-icon i {
+        font-size: 24px;
     }
-    .service-text {
-        font-size: 0.75rem;
-    }
-    .status-badge-hot {
-        right: 10%;
-        font-size: 0.6rem;
+    .service-name {
+        font-size: 13px;
     }
 }
 
-@media (max-width: 480px) {
-    .row.g-3 > [class*="col-"] {
-        padding-left: 5px;
-        padding-right: 5px;
-    }
-    .service-item-wrapper {
-        padding: 10px 2px;
+.mobile-flush {
+    border-radius: 0;
+}
+
+@media (min-width: 576px) {
+    .mobile-flush {
+        border-radius: 1rem !important;
     }
 }

@@ -7,6 +7,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\WalletController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\SupportController;
+use App\Http\Controllers\ReferralController;
 
 // Utility Controllers
 use App\Http\Controllers\Action\AirtimeController;
@@ -41,7 +42,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::post('/palmpay/webhook', [PaymentWebhookController::class, 'handleWebhook'])
+Route::post('/fintava/webhook', [PaymentWebhookController::class, 'handleWebhook'])
     ->middleware('throttle:60,1');
 
 /*
@@ -76,6 +77,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Support
     Route::get('/support', [SupportController::class, 'index'])->name('support');
+
+    // Referral
+    Route::get('/referral', [ReferralController::class, 'index'])->name('refferal');
+    Route::post('/referral/claim', [ReferralController::class, 'claimBonus'])->name('refferal.claim');
 
     /*
     |--------------------------------------------------------------------------

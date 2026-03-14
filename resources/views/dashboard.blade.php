@@ -130,45 +130,65 @@
             </div>
         </div>
 
-        <!-- Services Section -->
-        <section class="py-4">
-            <div class="container">
-                <div class="row service-grid justify-content-center">
-                    @php
-                        $services = [
-                            ['route' => route('wallet'), 'icon' => 'ti-wallet', 'color' => 'bg-primary', 'name' => 'Wallet'],
-                            ['route' => route('airtime'), 'icon' => 'ti-phone-call', 'color' => 'bg-info', 'name' => 'Airtime'],
-                            ['route' => route('buy-data'), 'icon' => 'ti-world', 'color' => 'bg-warning', 'name' => 'Data'],
-                            ['route' => route('buy-sme-data'), 'icon' => 'ti-world', 'color' => 'bg-success', 'name' => 'SME Data'],
-                            ['route' => route('electricity'), 'icon' => 'ti-bolt', 'color' => 'bg-danger', 'name' => 'Electricity'],
-                            ['modal' => '#verifyModal', 'icon' => 'ti-id-badge', 'color' => 'bg-primary', 'name' => 'Verify NIN'],
-                            ['modal' => '#verifyBVNModal', 'icon' => 'ti-id-badge', 'color' => 'bg-info', 'name' => 'Verify (BVN / TIN)'],
-                            ['route' => route('nin-validation'), 'icon' => 'ti-user-plus', 'color' => 'bg-warning', 'name' => 'Validation'],
-                            ['route' => route('ipe.index'), 'icon' => 'ti-user-plus', 'color' => 'bg-danger', 'name' => 'IPE'],
-                            ['route' => route('modification'), 'icon' => 'ti-user-plus', 'color' => 'bg-primary', 'name' => 'BVN Modification'],
-                            ['route' => route('nin-modification'), 'icon' => 'ti-user-plus', 'color' => 'bg-success', 'name' => 'NIN Modification'],
-                            ['route' => route('bvn-crm'), 'icon' => 'ti-user-plus', 'color' => 'bg-info', 'name' => 'BVN CRM'],
-                            ['route' => route('phone.search.index'), 'icon' => 'ti-user-plus', 'color' => 'bg-success', 'name' => 'BVN Search'],
-                            ['route' => route('support'), 'icon' => 'ti-message-plus', 'color' => 'bg-info', 'name' => 'Support'],
-                        ];
-                    @endphp
-
-                    @foreach ($services as $sv)
-                        <div class="col-4 col-md-2 d-flex">
-                            <a @if(isset($sv['route'])) href="{{ $sv['route'] }}" 
-                               @elseif(isset($sv['modal'])) href="#" data-bs-toggle="modal" data-bs-target="{{ $sv['modal'] }}"
-                               @else href="#" @endif class="w-100">
-                                <div class="card flex-fill shadow-sm text-center border-0 rounded-3 service-card {{ $sv['color'] ?? 'bg-white' }}">
-                                    <div class="card-body p-3 d-flex flex-column align-items-center">
-                                        <span class="avatar rounded-circle bg-white bg-opacity-25 mb-2 p-3">
-                                            <i class="ti {{ $sv['icon'] }} text-white fs-18"></i>
-                                        </span>
-                                        <h6 class="fs-13 fw-semibold text-white mb-0">{{ $sv['name'] }}</h6>
-                                    </div>
-                                </div>
-                            </a>
+        <!-- Quick Services Section -->
+        <section class="py-3 py-md-4">
+            <div class="container px-0 px-sm-3">
+                <div class="card border-0 shadow-sm mobile-flush rounded-4 overflow-hidden">
+                    <div class="card-body p-3 p-md-4">
+                        <div class="d-flex align-items-center gap-2 mb-1">
+                            <i class="fas fa-bolt text-warning"></i>
+                            <h5 class="fw-bold mb-0">Quick Services</h5>
                         </div>
-                    @endforeach
+                        <p class="text-muted small mb-3 mb-md-4">Instant access to popular payments</p>
+
+                        @php
+                            $services = [
+                                ['route' => route('wallet'), 'icon' => 'ti-wallet', 'color' => 'primary', 'name' => 'Wallet'],
+                                ['route' => route('airtime'), 'icon' => 'ti-phone-call', 'color' => 'info', 'name' => 'Airtime', 'hot' => true],
+                                ['route' => route('buy-data'), 'icon' => 'ti-world', 'color' => 'warning', 'name' => 'Data', 'hot' => true],
+                                ['route' => route('buy-sme-data'), 'icon' => 'ti-world', 'color' => 'success', 'name' => 'SME Data'],
+                                ['route' => route('electricity'), 'icon' => 'ti-bolt', 'color' => 'danger', 'name' => 'Electricity'],
+                                ['route' => route('education'), 'icon' => 'ti-school', 'color' => 'success', 'name' => 'Education'],
+                                ['route' => route('jamb'), 'icon' => 'ti-certificate', 'color' => 'secondary', 'name' => 'Jamb Pin'],
+                                ['route' => route('bvn-crm'), 'icon' => 'ti-users', 'color' => 'info', 'name' => 'CRM', 'hot' => true],
+                                ['route' => route('send-vnin'), 'icon' => 'ti-fingerprint', 'color' => 'warning', 'name' => 'Vnin/Fas'],
+                                ['route' => route('modification'), 'icon' => 'ti-checkbox', 'color' => 'danger', 'name' => 'BVN Mod', 'hot' => true],
+                                ['route' => route('phone.search.index'), 'icon' => 'ti-search', 'color' => 'success', 'name' => 'Search BVN'],
+                                ['route' => route('nin-modification'), 'icon' => 'ti-id', 'color' => 'info', 'name' => 'NIN Mod'],
+                                ['route' => route('nin-validation'), 'icon' => 'ti-checkbox', 'color' => 'warning', 'name' => 'NIN Validation'],
+                                ['route' => route('ipe.index'), 'icon' => 'ti-clear-formatting', 'color' => 'info', 'name' => 'IPE'],
+                                ['modal' => '#verifyModal', 'icon' => 'ti-id-badge', 'color' => 'info', 'name' => 'Verify NIN'],
+                                ['modal' => '#verifyBVNModal', 'icon' => 'ti-shield-check', 'color' => 'secondary', 'name' => 'Verify BVN'],
+                                ['route' => route('support'), 'icon' => 'ti-message-plus', 'color' => 'primary', 'name' => 'Support', 'hot' => true],
+                            ];
+                        @endphp
+
+                        <div class="row row-cols-3 row-cols-md-4 row-cols-lg-6 g-2 g-md-3 text-center">
+                            @foreach ($services as $sv)
+                                <div class="col">
+                                    <a 
+                                        @if(isset($sv['route'])) href="{{ $sv['route'] }}" 
+                                        @elseif(isset($sv['modal'])) href="#" data-bs-toggle="modal" data-bs-target="{{ $sv['modal'] }}"
+                                        @else href="#"
+                                        @endif
+                                        class="text-decoration-none service-item"
+                                    >
+                                        <div class="service-content p-2 p-md-3 position-relative">
+                                            @if(isset($sv['hot']) && $sv['hot'])
+                                                <span class="position-absolute top-0 end-0 translate-middle badge rounded-pill bg-danger text-white border border-white" style="font-size: 8px; padding: 3px 6px; z-index: 1; margin-top: 10px; margin-right: 2px; animation: pulse-red 2s infinite;">
+                                                    HOT
+                                                </span>
+                                            @endif
+                                            <div class="service-icon mb-2 mx-auto bg-{{ $sv['color'] }}-soft">
+                                                <i class="ti {{ $sv['icon'] }} fs-15 fs-md-4 text-{{ $sv['color'] }}"></i>
+                                            </div>
+                                            <span class="service-name text-dark">{{ $sv['name'] }}</span>
+                                        </div>
+                                    </a>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>

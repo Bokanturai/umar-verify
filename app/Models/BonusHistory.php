@@ -17,4 +17,9 @@ class BonusHistory extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
+    public function referredUser()
+    {
+        return $this->belongsTo(User::class, 'referred_user_id');
+    }
 }
