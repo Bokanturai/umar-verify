@@ -8,6 +8,7 @@ use App\Http\Controllers\WalletController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\SupportController;
 use App\Http\Controllers\ReferralController;
+use App\Http\Controllers\Agency\LicenseController;
 
 // Utility Controllers
 use App\Http\Controllers\Action\AirtimeController;
@@ -233,6 +234,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/', [ManualSearchController::class, 'index'])->name('phone.search.index');
         Route::post('/', [ManualSearchController::class, 'store'])->name('phone.search.store');
         Route::get('/{id}/details', [ManualSearchController::class, 'showDetails'])->name('phone.search.details');
+    });
+
+    // License Service
+    Route::prefix('license')->group(function () {
+        Route::get('/', [LicenseController::class, 'index'])->name('license.index');
+        Route::post('/', [LicenseController::class, 'store'])->name('license.store');
     });
 });
 

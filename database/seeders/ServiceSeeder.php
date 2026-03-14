@@ -138,6 +138,11 @@ class ServiceSeeder extends Seeder
                 ['name' => 'IPE Clearance', 'code' => '002', 'price' => 3000],
             ]);
 
+            // Government License and Permit Processing
+            ServiceManager::getServiceWithFields('Government License and Permit Processing', [
+                ['name' => 'License Registration', 'code' => 'LIC001', 'price' => 1000],
+            ]);
+
         
     }
 }

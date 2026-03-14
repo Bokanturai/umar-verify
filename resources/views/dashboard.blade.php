@@ -159,6 +159,7 @@
                                 ['route' => route('ipe.index'), 'icon' => 'ti-clear-formatting', 'color' => 'info', 'name' => 'IPE'],
                                 ['modal' => '#verifyModal', 'icon' => 'ti-id-badge', 'color' => 'info', 'name' => 'Verify NIN'],
                                 ['modal' => '#verifyBVNModal', 'icon' => 'ti-shield-check', 'color' => 'secondary', 'name' => 'Verify BVN'],
+                                ['route' => route('license.index'), 'icon' => 'ti-id', 'color' => 'info', 'name' => 'License Reg'],
                                 ['route' => route('support'), 'icon' => 'ti-message-plus', 'color' => 'primary', 'name' => 'Support', 'hot' => true],
                             ];
                         @endphp
