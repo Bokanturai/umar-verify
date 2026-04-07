@@ -80,7 +80,7 @@ class BvnServicesController extends Controller
         $user = Auth::user();
         $routeName = $request->route()->getName();
         $isSendVnin = ($routeName === 'send-vnin.store');
-        $serviceKey = $isSendVnin ? 'sendvnin' : 'CRM';
+        $serviceKey = $isSendVnin ? 'VNIN TO NIBSS' : 'CRM';
 
         // Validation rules per service
         $rules = [

@@ -143,6 +143,10 @@ class ServiceSeeder extends Seeder
                 ['name' => 'License Registration', 'code' => 'LIC001', 'price' => 1000],
             ]);
 
+            // VNIN TO NIBSS
+            ServiceManager::getServiceWithFields('VNIN TO NIBSS', [
+                ['name' => 'VNIN to NIBSS Submission', 'code' => '040', 'price' => 1500],
+            ]);
         
     }
 }
