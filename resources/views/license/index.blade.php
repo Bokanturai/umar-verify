@@ -117,6 +117,9 @@
                         <div class="card border-0 shadow-sm rounded-4 h-100">
                             <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex align-items-center justify-content-between">
                                 <h5 class="fw-bold mb-0">Recent Requests</h5>
+                                <button onclick="batchCheck()" class="btn btn-sm btn-outline-primary rounded-pill shadow-sm">
+                                    <i class="ti ti-refresh me-1"></i> Check Status
+                                </button>
                             </div>
                             <div class="card-body p-0">
                                 <div class="table-responsive">
@@ -333,7 +336,68 @@
                     });
                 });
             }
+            }
         });
+
+        // Batch Status Check
+        function batchCheck() {
+            Swal.fire({
+                title: 'Refresh Status?',
+                text: "This will check for any updates on your pending license requests.",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#0d6efd',
+                cancelButtonText: 'Cancel',
+                confirmButtonText: 'Yes, check now!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Processing...',
+                        text: 'Checking your requests, please wait.',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                    fetch('{{ route('license.batch-check') }}', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Status Refresh Complete',
+                                text: data.message,
+                                confirmButtonText: 'Reload Page'
+                            }).then(() => {
+                                window.location.reload();
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Failed',
+                                text: data.message || 'Something went wrong during the check.'
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'A network error occurred. Please try again.'
+                        });
+                    });
+                }
+            });
+        }
     </script>
     @endpush
 

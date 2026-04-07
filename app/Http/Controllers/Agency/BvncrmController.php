@@ -341,6 +341,122 @@ class BvncrmController extends Controller
         }
     }
 
+    public function batchCheck()
+    {
+        try {
+            $pendingSubmissions = AgentService::where('service_name', 'CRM')
+                ->whereIn('status', ['pending', 'processing'])
+                ->where(function($query) {
+                    $query->where('updated_at', '<', now()->subMinutes(10))
+                          ->orWhereNull('updated_at');
+                })
+                ->limit(20)
+                ->get();
+
+            $apiKey = env('AREWA_API_TOKEN');
+            $apiBaseUrl = env('AREWA_BASE_URL', 'https://api.arewasmart.com.ng/api/v1');
+            $apiUrl = rtrim($apiBaseUrl, '/') . '/bvn/crm';
+
+            $checked = 0;
+
+            foreach ($pendingSubmissions as $submission) {
+                try {
+                    $params = [];
+                    if ($submission->reference) {
+                        $params['reference'] = $submission->reference;
+                    } elseif ($submission->batch_id) {
+                        $params['batch_id'] = $submission->batch_id;
+                    } elseif ($submission->ticket_id) {
+                        $params['ticket_id'] = $submission->ticket_id;
+                    }
+
+                    if (empty($params)) continue;
+
+                    $response = Http::withToken($apiKey)
+                        ->acceptJson()
+                        ->get($apiUrl, $params);
+
+                    $apiResponse = $response->json();
+
+                    if ($response->successful()) {
+                        $data = $apiResponse['data'] ?? [];
+                        
+                        $updateData = [];
+                        if (isset($data['status'])) {
+                            $updateData['status'] = $this->normalizeStatus($data['status']);
+                        }
+                        
+                        if (isset($data['comment'])) {
+                            $updateData['comment'] = $data['comment'];
+                        } elseif (isset($apiResponse['message'])) {
+                            $updateData['comment'] = $apiResponse['message'];
+                        } elseif (isset($data['reason'])) {
+                            $updateData['comment'] = $data['reason'];
+                        }
+
+                        if (isset($data['file_url'])) {
+                            $updateData['file_url'] = $data['file_url'];
+                        }
+
+                        if (!empty($updateData)) {
+                            $isFailingNow = isset($updateData['status']) && $updateData['status'] === 'failed' && $submission->status !== 'failed';
+
+                            if ($isFailingNow) {
+                                DB::beginTransaction();
+                                try {
+                                    $submission->update($updateData);
+
+                                    $wallet = Wallet::where('user_id', $submission->user_id)->lockForUpdate()->first();
+                                    if ($wallet) {
+                                        $wallet->increment('balance', $submission->amount);
+
+                                        Transaction::create([
+                                            'transaction_ref' => 'REF_' . $submission->reference,
+                                            'user_id'         => $submission->user_id,
+                                            'amount'          => $submission->amount,
+                                            'performed_by'    => 'System Auto-Refund',
+                                            'description'     => "Refund for failed {$submission->service_name} CRM",
+                                            'type'            => 'credit',
+                                            'status'          => 'completed',
+                                            'metadata'        => [
+                                                'original_reference' => $submission->reference,
+                                                'api_reason'         => $updateData['comment'] ?? 'Failed submission',
+                                            ],
+                                        ]);
+                                    }
+
+                                    DB::commit();
+                                } catch (\Exception $e) {
+                                    DB::rollBack();
+                                    Log::error('BVN CRM Auto Refund Error in Batch', ['error' => $e->getMessage(), 'submission_id' => $submission->id]);
+                                }
+                            } else {
+                                $submission->update($updateData);
+                            }
+                        }
+                        $checked++;
+                    }
+                } catch (\Exception $e) {
+                    Log::error('Batch check error for BVN CRM ' . $submission->id . ': ' . $e->getMessage());
+                    continue;
+                }
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => "Batch check completed. Checked {$checked} submissions.",
+                'checked' => $checked
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Batch Check Error (BVN CRM): ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Batch check failed: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
     private function normalizeStatus($status): string
     {
         $s = strtolower(trim((string) $status));

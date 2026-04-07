@@ -288,10 +288,13 @@
                 {{-- Submission History Column --}}
                 <div class="col-xl-6">
                     <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
-                        <div class="card-header bg-white border-bottom py-3">
+                        <div class="card-header bg-white border-bottom py-3 d-flex align-items-center justify-content-between">
                             <h5 class="fw-bold mb-0 text-dark">
                                 <i class="bi bi-clock-history me-2 text-primary"></i> Request History
                             </h5>
+                            <button onclick="batchCheck()" class="btn btn-sm btn-outline-primary rounded-pill shadow-sm">
+                                <i class="bi bi-arrow-clockwise me-1"></i> Check All Pending
+                            </button>
                         </div>
 
                         <div class="card-body p-4">
@@ -474,5 +477,65 @@
                 });
             @endif
         });
+
+        // Batch Status Check
+        function batchCheck() {
+            Swal.fire({
+                title: 'Check All Pending?',
+                text: "This will update the status of all your pending NIN modification requests.",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3841e1',
+                cancelButtonText: 'Cancel',
+                confirmButtonText: 'Yes, check all!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Processing...',
+                        text: 'Checking statuses with server, please wait.',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                    fetch('{{ route('nin-modification.batch-check') }}', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Batch Check Complete',
+                                text: data.message,
+                                confirmButtonText: 'Reload Page'
+                            }).then(() => {
+                                window.location.reload();
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Failed',
+                                text: data.message || 'Something went wrong during batch check.'
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'A network error occurred. Please try again.'
+                        });
+                    });
+                }
+            });
+        }
     </script>
 </x-app-layout>

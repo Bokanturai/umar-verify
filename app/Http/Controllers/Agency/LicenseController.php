@@ -9,6 +9,7 @@ use App\Models\AgentService;
 use App\Models\Wallet;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class LicenseController extends Controller
@@ -112,6 +113,27 @@ class LicenseController extends Controller
                 'status' => 'error',
                 'message' => 'An error occurred: ' . $e->getMessage()
             ])->withInput();
+        }
+    }
+    public function batchCheck()
+    {
+        try {
+            $pendingCount = AgentService::where('user_id', Auth::id())
+                ->where('service_type', 'license_request')
+                ->whereIn('status', ['pending', 'processing'])
+                ->count();
+
+            return response()->json([
+                'success' => true,
+                'message' => "Batch check complete. {$pendingCount} requests are currently being processed by our team.",
+                'checked' => $pendingCount
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Batch Check Error (License): ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Batch check failed: ' . $e->getMessage()
+            ], 500);
         }
     }
 }

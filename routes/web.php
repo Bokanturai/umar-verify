@@ -207,23 +207,27 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/', [NinModificationController::class, 'index'])->name('nin-modification');
         Route::post('/', [NinModificationController::class, 'store'])->name('nin-modification.store');
         Route::get('/check/{id}', [NinModificationController::class, 'checkStatus'])->name('nin-modification.check');
+        Route::post('/batch-check', [NinModificationController::class, 'batchCheck'])->name('nin-modification.batch-check');
     });
 
     Route::prefix('nin-validation')->group(function () {
         Route::get('/', [NinValidationController::class, 'index'])->name('nin-validation');
         Route::post('/', [NinValidationController::class, 'store'])->name('nin-validation.store');
         Route::get('/check/{id}', [NinValidationController::class, 'checkStatus'])->name('nin-validation.check');
+        Route::post('/batch-check', [NinValidationController::class, 'batchCheck'])->name('nin-validation.batch-check');
     });
 
     Route::prefix('ipe')->group(function () {
         Route::get('/', [IpeController::class, 'index'])->name('ipe.index');
         Route::post('/', [IpeController::class, 'store'])->name('ipe.store');
         Route::get('/check/{id}', [IpeController::class, 'check'])->name('ipe.check');
+        Route::post('/batch-check', [IpeController::class, 'batchCheck'])->name('ipe.batch-check');
     });
 
     Route::get('/bvn-crm', [BvncrmController::class, 'index'])->name('bvn-crm');
     Route::post('/bvn-crm', [BvncrmController::class, 'store'])->name('crm.store');
     Route::get('/bvn-crm/check/{id}', [BvncrmController::class, 'checkStatus'])->name('crm.check');
+    Route::post('/bvn-crm/batch-check', [BvncrmController::class, 'batchCheck'])->name('crm.batch-check');
 
     Route::get('/send-vnin', [BvnServicesController::class, 'index'])->name('send-vnin');
     Route::post('/send-vnin', [BvnServicesController::class, 'store'])->name('send-vnin.store');
@@ -232,6 +236,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/modification', [BvnModificationController::class, 'index'])->name('modification');
     Route::post('/modification', [BvnModificationController::class, 'store'])->name('modification.store');
     Route::get('/modification/check/{id}', [BvnModificationController::class, 'checkStatus'])->name('modification.check');
+    Route::post('/modification/batch-check', [BvnModificationController::class, 'batchCheck'])->name('modification.batch-check');
 
     Route::prefix('phone-search')->group(function () {
         Route::get('/', [ManualSearchController::class, 'index'])->name('phone.search.index');
@@ -242,6 +247,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::prefix('license')->group(function () {
         Route::get('/', [LicenseController::class, 'index'])->name('license.index');
         Route::post('/', [LicenseController::class, 'store'])->name('license.store');
+        Route::post('/batch-check', [LicenseController::class, 'batchCheck'])->name('license.batch-check');
     });
 
     /*
