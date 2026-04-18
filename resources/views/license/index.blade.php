@@ -206,7 +206,7 @@
                 Swal.fire({
                     icon: 'success',
                     title: 'Success!',
-                    text: "{{ session('message') }}",
+                    text: "{!! addslashes(session('message')) !!}",
                     confirmButtonColor: '#0d6efd'
                 });
             @endif
@@ -216,7 +216,7 @@
                 Swal.fire({
                     icon: 'error',
                     title: 'Oops...',
-                    text: "{{ session('message') ?? $errors->first() }}",
+                    text: "{!! addslashes(session('message') ?? $errors->first()) !!}",
                     confirmButtonColor: '#0d6efd'
                 });
             @endif
@@ -335,7 +335,6 @@
                         }
                     });
                 });
-            }
             }
         });
 
