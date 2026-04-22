@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->foreignId('service_id')->constrained('services')->cascadeOnDelete();
             $table->foreignId('service_field_id')->nullable()->constrained('service_fields')->nullOnDelete();
             $table->foreignId('transaction_id')->constrained()->cascadeOnDelete();
-            $table->string('service_type', 50)->default('not_selected');
+            $table->enum('service_type', ['VNIN TO NIBSS', 'bvn_search', 'bvn_modification', 'crm', 'bvn_user', 'approval_request', 'affidavit', 'nin_selfservice', 'nin_personalization', 'nin_validation','ipe', 'not_selected', 'nin_modification'])->default('not_selected');
             $table->string('field_code', 20)->nullable();
             $table->string('ticket_id', 8)->nullable();
             $table->string('batch_id', 7)->nullable();
@@ -40,8 +40,7 @@ return new class extends Migration {
             $table->string('service_name')->nullable();
             $table->string('service_field_name')->nullable();
             $table->string('bank')->nullable();
-            $table->text('description')->nullable();
-            $table->json('modification_data')->nullable();
+            $table->string('description', 150)->nullable();
             $table->string('affidavit')->nullable(); 
             $table->string('affidavit_file_url')->nullable();
             $table->string('file_url')->nullable();
@@ -55,6 +54,7 @@ return new class extends Migration {
             $table->string('performed_by', 150)->nullable();
             $table->string('approved_by', 150)->nullable();
             $table->string('completed_by', 150)->nullable();
+            // REMOVED: $table->decimal('amount', 10, 2)->nullable(); // Duplicate column
             $table->dateTime('submission_date');
 
             $table->enum('status', [
@@ -71,7 +71,7 @@ return new class extends Migration {
 
             $table->text('comment')->nullable();
 
-            // Company-related fields
+            // Newly added company-related fields
             $table->string('company_name')->nullable();
             $table->string('registration_number')->nullable();
             $table->string('phone_number')->nullable();
