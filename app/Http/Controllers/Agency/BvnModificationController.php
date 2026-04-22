@@ -9,7 +9,6 @@ use App\Models\Service;
 use App\Models\Wallet;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use App\Http\Controllers\Controller;
@@ -193,7 +192,7 @@ class BvnModificationController extends Controller
                 'bank' => $service->name,
                 'bvn' => $validated['bvn'],
                 'nin' => $validated['nin'],
-                'description' => $description,
+                'description' => $validated['description'] ?? null,
                 'modification_data' => $request->modification_data ?? null,
                 'amount' => $totalAmount,
                 'affidavit_file' => $fileName,
