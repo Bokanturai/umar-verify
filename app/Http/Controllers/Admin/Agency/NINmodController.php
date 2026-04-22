@@ -28,13 +28,6 @@ class NINmodController extends Controller
             'success' => false,
             'message' => 'Manual status check required. This service is now processed manually by administrators.',
         ], 200);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'An error occurred: ' . $e->getMessage(),
-            ], 500);
-        }
     }
 
     /**

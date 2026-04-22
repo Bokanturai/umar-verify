@@ -30,7 +30,7 @@
                         <h4 class="fw-semibold text-dark mb-1 welcome-text">
                             Welcome back, {{ Auth::user()->first_name . ' ' . Auth::user()->surname ?? 'User' }} 👋
                         </h4>
-                        <small class="text-success">Account ID: {{ $virtualAccount->accountNo ?? 'N/A' }} PalmPay</small>
+                        <small class="text-success">Account ID: {{ $virtualAccount->accountNo ?? 'N/A' }} Moniepoint</small>
                     </div>
 
                     <!-- Wallet Info -->
