@@ -182,13 +182,19 @@
 
     {{-- Data Card --}}
     <div class="card border-0 shadow-sm" style="border-radius: 1.25rem;">
-        <div class="card-header bg-white py-4 border-bottom-0 d-flex justify-content-between align-items-center">
+        <div class="card-header bg-white py-4 border-bottom-0 d-flex justify-content-between align-items-center flex-wrap gap-2">
             <h5 class="mb-0 fw-bold text-dark d-flex align-items-center">
                 <i class="ti ti-list-details me-2 text-primary fs-22"></i>
                 NIN Validation Requests
             </h5>
-            <div class="text-muted small">
-                Showing {{ $enrollments->firstItem() }} to {{ $enrollments->lastItem() }} of {{ $enrollments->total() }} entries
+            <div class="d-flex align-items-center gap-3">
+                <div class="text-muted small">
+                    Total: {{ $enrollments->total() }} records
+                </div>
+                <button type="button" id="checkAllStatusBtn" class="btn btn-sm btn-outline-primary d-flex align-items-center gap-2 px-3 py-2" onclick="checkAllStatuses()">
+                    <i class="ti ti-refresh fs-16"></i>
+                    <span class="fw-semibold">Check Status for All</span>
+                </button>
             </div>
         </div>
 
@@ -280,9 +286,17 @@
                                     </div>
                                 </td>
                                 <td class="pe-4 text-end">
-                                    <a href="{{ route('admin.validation.show', $enrollment->id) }}" class="btn btn-icon btn-light btn-sm rounded-circle shadow-sm" data-bs-toggle="tooltip" title="View Details">
-                                        <i class="ti ti-eye text-primary"></i>
-                                    </a>
+                                    <div class="d-flex justify-content-end gap-1">
+                                        <button type="button" class="btn btn-icon btn-light btn-sm rounded-circle shadow-sm check-status-btn"
+                                            data-id="{{ $enrollment->id }}"
+                                            data-url="{{ route('admin.validation.check', $enrollment->id) }}"
+                                            data-bs-toggle="tooltip" title="Check Status">
+                                            <i class="ti ti-refresh text-info"></i>
+                                        </button>
+                                        <a href="{{ route('admin.validation.show', $enrollment->id) }}" class="btn btn-icon btn-light btn-sm rounded-circle shadow-sm" data-bs-toggle="tooltip" title="View Details">
+                                            <i class="ti ti-eye text-primary"></i>
+                                        </a>
+                                    </div>
                                 </td>
                             </tr>
                         @empty
@@ -344,6 +358,146 @@
     }
 </style>
 
+{{-- Batch Check Status Progress Modal --}}
+<div class="modal fade" id="checkAllModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold">
+                    <i class="ti ti-refresh me-2 text-primary"></i>Checking All Statuses
+                </h5>
+            </div>
+            <div class="modal-body pt-2">
+                <p class="text-muted small mb-3" id="checkProgressText">Initialising...</p>
+                <div class="progress mb-3" style="height: 8px; border-radius: 99px;">
+                    <div id="checkProgressBar" class="progress-bar progress-bar-striped progress-bar-animated bg-primary" style="width: 0%;"></div>
+                </div>
+                <div class="d-flex gap-3 mb-2">
+                    <span class="badge bg-success-subtle text-success px-3 py-2 rounded-pill fs-12 fw-semibold">
+                        <i class="ti ti-circle-check me-1"></i><span id="successCount">0</span> Updated
+                    </span>
+                    <span class="badge bg-danger-subtle text-danger px-3 py-2 rounded-pill fs-12 fw-semibold">
+                        <i class="ti ti-circle-x me-1"></i><span id="failCount">0</span> Failed
+                    </span>
+                </div>
+                <div id="checkResultLog" class="mt-3 bg-light rounded p-3" style="max-height: 200px; overflow-y: auto; font-size: 12px; font-family: monospace; display: none;"></div>
+            </div>
+            <div class="modal-footer border-0 pt-0">
+                <button type="button" class="btn btn-secondary btn-sm" id="closeCheckModal" data-bs-dismiss="modal" style="display:none;">Close & Refresh</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    // Per-row single check
+    document.querySelectorAll('.check-status-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const url = this.dataset.url;
+            const icon = this.querySelector('i');
+            icon.classList.add('spin-icon');
+            this.disabled = true;
+
+            fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' } })
+                .then(r => r.json())
+                .then(data => {
+                    icon.classList.remove('spin-icon');
+                    this.disabled = false;
+                    if (data.success) {
+                        showToast('Status updated: ' + (data.data?.status ?? ''), 'success');
+                        setTimeout(() => location.reload(), 1200);
+                    } else {
+                        showToast(data.message ?? 'No update.', 'warning');
+                    }
+                })
+                .catch(() => {
+                    icon.classList.remove('spin-icon');
+                    this.disabled = false;
+                    showToast('Request failed.', 'danger');
+                });
+        });
+    });
+
+    // Init tooltips
+    document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => new bootstrap.Tooltip(el));
+})();
+
+async function checkAllStatuses() {
+    const buttons = Array.from(document.querySelectorAll('.check-status-btn'));
+    if (!buttons.length) return;
+
+    const modal = new bootstrap.Modal(document.getElementById('checkAllModal'));
+    modal.show();
+
+    const progressBar = document.getElementById('checkProgressBar');
+    const progressText = document.getElementById('checkProgressText');
+    const successCount = document.getElementById('successCount');
+    const failCount = document.getElementById('failCount');
+    const logBox = document.getElementById('checkResultLog');
+    const closeBtn = document.getElementById('closeCheckModal');
+    const mainBtn = document.getElementById('checkAllStatusBtn');
+
+    logBox.style.display = 'block';
+    logBox.innerHTML = '';
+    successCount.textContent = '0';
+    failCount.textContent = '0';
+    mainBtn.disabled = true;
+
+    let done = 0, success = 0, failed = 0;
+    const total = buttons.length;
+
+    for (const btn of buttons) {
+        const url = btn.dataset.url;
+        progressText.textContent = `Checking ${done + 1} of ${total}...`;
+        progressBar.style.width = Math.round((done / total) * 100) + '%';
+
+        try {
+            const res = await fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' } });
+            const data = await res.json();
+            if (data.success) {
+                success++;
+                successCount.textContent = success;
+                logBox.innerHTML += `<div class="text-success">✔ #${btn.dataset.id}: ${data.data?.status ?? 'updated'}</div>`;
+            } else {
+                failed++;
+                failCount.textContent = failed;
+                logBox.innerHTML += `<div class="text-danger">✘ #${btn.dataset.id}: ${data.message ?? 'no update'}</div>`;
+            }
+        } catch (e) {
+            failed++;
+            failCount.textContent = failed;
+            logBox.innerHTML += `<div class="text-danger">✘ #${btn.dataset.id}: request error</div>`;
+        }
+
+        logBox.scrollTop = logBox.scrollHeight;
+        done++;
+        await new Promise(r => setTimeout(r, 300));
+    }
+
+    progressBar.style.width = '100%';
+    progressBar.classList.remove('progress-bar-animated');
+    progressText.textContent = `Done! ${success} updated, ${failed} failed out of ${total} records.`;
+    closeBtn.style.display = 'inline-block';
+    mainBtn.disabled = false;
+
+    closeBtn.addEventListener('click', () => location.reload(), { once: true });
+}
+
+function showToast(msg, type) {
+    const t = document.createElement('div');
+    t.className = `alert alert-${type} alert-dismissible fade show position-fixed shadow`;
+    t.style.cssText = 'bottom:20px;right:20px;z-index:9999;min-width:280px;';
+    t.innerHTML = msg + `<button type="button" class="btn-close" data-bs-dismiss="alert"></button>`;
+    document.body.appendChild(t);
+    setTimeout(() => t.remove(), 4000);
+}
+</script>
+
+<style>
+.spin-icon { animation: spin 0.8s linear infinite; }
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+</style>
 
 </x-app-layout>
 
