@@ -2,7 +2,7 @@
 <section id="services" style="padding: 100px 0; background-color: #f9f9f9; position: relative;">
     <!-- Background Elements -->
     <div
-        style="position: absolute; top: 0; right: 0; width: 300px; height: 300px; background: radial-gradient(circle, rgba(255, 19, 240, 0.1) 0%, rgba(255,255,255,0) 70%);">
+        style="position: absolute; top: 0; right: 0; width: 300px; height: 300px; background: radial-gradient(circle, rgba(15, 118, 110, 0.1) 0%, rgba(255,255,255,0) 70%);">
     </div>
     <div
         style="position: absolute; bottom: 0; left: 0; width: 400px; height: 400px; background: radial-gradient(circle, rgba(15, 23, 42, 0.05) 0%, rgba(255,255,255,0) 70%);">
@@ -10,10 +10,10 @@
 
     <div class="container px-0 px-md-3">
         <div class="section-title text-center mb-5" data-aos="fade-up">
-            <h4 style="color: #FF13F0; font-weight: 600; letter-spacing: 2px; text-transform: uppercase;">What We Do
+            <h4 style="color: #0F766E; font-weight: 600; letter-spacing: 2px; text-transform: uppercase;">What We Do
             </h4>
             <h2 style="color: #111827; font-weight: 800; font-size: 2.5rem;">Our Premium Services</h2>
-            <hr style="width: 60px; height: 3px; background: #FF13F0; margin: 15px auto; border: none;">
+            <hr style="width: 60px; height: 3px; background: #0F766E; margin: 15px auto; border: none;">
             <p class="mt-3 text-muted" style="max-width: 600px; margin: 0 auto; font-size: 1.1rem;">
                 We deliver cutting-edge identity and utility solutions designed to streamline your operations and personal needs.
             </p>
@@ -115,7 +115,7 @@
             left: 0;
             width: 100%;
             height: 0;
-            background: linear-gradient(135deg, #FF13F0 0%, #D600C7 100%);
+            background: linear-gradient(135deg, #0F766E 0%, #0D5A54 100%);
             transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
             z-index: -1;
             /* border-radius: 20px; handled by bootstrap classes */
@@ -123,7 +123,7 @@
 
         .service-card-premium:hover {
             transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(255, 19, 240, 0.15);
+            box-shadow: 0 20px 40px rgba(15, 118, 110, 0.15);
         }
 
         .service-card-premium:hover::before {
@@ -133,7 +133,7 @@
         .icon-wrapper {
             width: 70px;
             height: 70px;
-            background: rgba(255, 19, 240, 0.1);
+            background: rgba(15, 118, 110, 0.1);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -144,7 +144,7 @@
 
         .icon-wrapper i {
             font-size: 1.8rem;
-            color: #FF13F0;
+            color: #0F766E;
             transition: all 0.4s ease;
         }
 
@@ -177,7 +177,7 @@
         }
 
         .service-link {
-            color: #FF13F0;
+            color: #0F766E;
             font-weight: 600;
             text-decoration: none;
             display: inline-flex;

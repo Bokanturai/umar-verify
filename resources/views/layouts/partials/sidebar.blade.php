@@ -334,16 +334,16 @@
     }
 
     .sidebar-menu li a:hover {
-        background: rgba(255, 19, 240, 0.05);
-        color: #FF13F0;
+        background: rgba(15, 118, 110, 0.05);
+        color: #0F766E;
     }
 
     /* Active Menu Item */
     .sidebar-menu li.active>a,
     .sidebar-menu li a.active {
-        background: #FF13F0 !important;
+        background: #0F766E !important;
         color: #ffffff !important;
-        box-shadow: 0 4px 12px rgba(255, 19, 240, 0.15);
+        box-shadow: 0 4px 12px rgba(15, 118, 110, 0.15);
     }
 
     .sidebar-menu li.active>a i,
@@ -373,7 +373,7 @@
     }
 
     .sidebar-menu .submenu ul li a:hover {
-        color: #FF13F0;
+        color: #0F766E;
         background: transparent;
         text-decoration: underline;
     }
@@ -399,7 +399,7 @@
             text: "You will be logged out of your account.",
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonColor: '#FF13F0',
+            confirmButtonColor: '#0F766E',
             cancelButtonColor: '#d33',
             confirmButtonText: 'Yes, logout!',
             cancelButtonText: 'Cancel'

@@ -17,8 +17,8 @@ export default {
             },
             colors: {
                 primary: {
-                    DEFAULT: '#FFEDFB',
-                    foreground: '#FF13F0',
+                    DEFAULT: '#E6F7F6',
+                    foreground: '#0F766E',
                 },
                 success: {
                     DEFAULT: '#10B981',

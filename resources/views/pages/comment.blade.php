@@ -1,4 +1,4 @@
-<!-- AREWA SMART: Comment Response Modal -->
+<!-- Smart Idea: Comment Response Modal -->
 <div class="modal fade" id="commentModal" tabindex="-1" aria-labelledby="commentModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content border-0 shadow-lg rounded-3 overflow-hidden">

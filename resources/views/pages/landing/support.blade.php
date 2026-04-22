@@ -8,7 +8,7 @@
 
     <div class="container px-0 px-md-3">
         <div class="section-title text-center mb-5" data-aos="fade-up">
-            <h4 style="color: #FF13F0; font-weight: 600; letter-spacing: 2px; text-transform: uppercase;">Get In Touch
+            <h4 style="color: #0F766E; font-weight: 600; letter-spacing: 2px; text-transform: uppercase;">Get In Touch
             </h4>
             <h2 style="color: #111827; font-weight: 800; font-size: 2.5rem;">We're Here to Help</h2>
             <hr style="width: 60px; height: 3px; background: #CBA135; margin: 15px auto; border: none;">
@@ -22,7 +22,7 @@
             <!-- Support Info -->
             <div class="col-12 col-lg-5 mb-4 mb-lg-0" data-aos="fade-right">
                 <div class="support-info-card rounded-0 rounded-md-4"
-                    style="background: linear-gradient(135deg, #FF13F0 0%, #D600C7 100%); padding: 40px; color: white; box-shadow: 0 20px 40px rgba(255, 19, 240, 0.3);">
+                    style="background: linear-gradient(135deg, #0F766E 0%, #0D5A54 100%); padding: 40px; color: white; box-shadow: 0 20px 40px rgba(15, 118, 110, 0.3);">
                     <h3 style="font-weight: 700; margin-bottom: 30px;">Contact Information</h3>
 
                     <div class="d-flex align-items-center mb-4">
@@ -33,7 +33,7 @@
                         <div>
                             <span style="display: block; opacity: 0.8; font-size: 0.9rem;">Call Us</span>
                             <a href="tel:09110501995"
-                                style="color: white; font-weight: 600; font-size: 1.1rem; text-decoration: none;">08165625614</a>
+                                style="color: white; font-weight: 600; font-size: 1.1rem; text-decoration: none;">08144544454</a>
                         </div>
                     </div>
 
@@ -44,7 +44,7 @@
                         </div>
                         <div>
                             <span style="display: block; opacity: 0.8; font-size: 0.9rem;">WhatsApp Support</span>
-                            <a href="https://wa.me/2348165625614" target="_blank"
+                            <a href="https://wa.me/23408144544454" target="_blank"
                                 style="color: white; font-weight: 600; font-size: 1.1rem; text-decoration: none;">Chat
                                 Now</a>
                         </div>
@@ -57,8 +57,8 @@
                         </div>
                         <div>
                             <span style="display: block; opacity: 0.8; font-size: 0.9rem;">Visit Us</span>
-                            <span style="color: white; font-weight: 600; font-size: 1rem;">No 5 Adamawa state yola
-                                beside gombi road Adamawa Nigeria
+                            <span style="color: white; font-weight: 600; font-size: 1rem;">No 5 Kano state yola
+                                beside gombi road Kano Nigeria
                             </span>
                         </div>
                     </div>
@@ -126,13 +126,13 @@
         }
 
         .form-control-custom:focus {
-            border-color: #FF13F0;
+            border-color: #0F766E;
             outline: none;
-            box-shadow: 0 0 0 3px rgba(255, 19, 240, 0.1);
+            box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.1);
         }
 
         .btn-primary-custom {
-            background: #FF13F0;
+            background: #0F766E;
             color: white;
             padding: 12px 30px;
             border: none;
@@ -145,9 +145,9 @@
         }
 
         .btn-primary-custom:hover {
-            background: #FF13F0;
+            background: #0F766E;
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(255, 19, 240, 0.3);
+            box-shadow: 0 5px 15px rgba(15, 118, 110, 0.3);
         }
     </style>
 </section>

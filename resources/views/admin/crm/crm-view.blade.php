@@ -1,5 +1,5 @@
 <x-app-layout>
-  <title>Imam Data Sub - CRM Service Details</title>
+  <title>Smart Idea - CRM Service Details</title>
 
     <div class="content">
         <div class="row mb-4">
@@ -249,7 +249,7 @@
                             <input type="file" class="form-control" id="file" name="file" 
                                 accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
                             <small class="text-muted">
-                                <i class="ti ti-paperclip me-1"></i>Accepted formats: PDF, JPG, PNG, DOC, DOCX (Max: 5MB)
+                                <i class="ti ti-paperclip me-1"></i>Accepted formats: PDF, JPG, PNG, DOC, DOCX (Max: 2MB)
                             </small>
                         </div>
 

@@ -1,5 +1,5 @@
 <x-app-layout>
- <title>Imam Data Sub</title>
+ <title>Smart Idea</title>
 
     <div class="container-fluid py-4 px-md-4">
         <!-- Page Header -->

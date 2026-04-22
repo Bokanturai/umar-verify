@@ -1,5 +1,5 @@
 <x-app-layout>
-    <title>Zaidi Verify - {{ $title ?? 'NIN Modification' }}</title>
+    <title>Smart Idea - {{ $title ?? 'NIN Modification' }}</title>
 
     <div class="page-body">
         <div class="container-fluid">
@@ -368,7 +368,7 @@
                                                         @if(!in_array($submission->status, ['successful', 'rejected']))
                                                             <a href="{{ route('nin-modification.check', $submission->id) }}" 
                                                                class="btn btn-sm btn-icon btn-outline-success" 
-                                                               title="Sync Status">
+                                                               title="Check for Admin Update">
                                                                 <i class="bi bi-arrow-clockwise"></i>
                                                             </a>
                                                         @elseif($submission->status === 'successful' && $fileUrl)

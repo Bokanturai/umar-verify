@@ -1,5 +1,5 @@
 <x-app-layout>
-    <title>Safana Digital - Transactions</title>
+    <title>Smart Idea - Transactions</title>
 
     <div class="content">
         <!-- Stats Cards -->

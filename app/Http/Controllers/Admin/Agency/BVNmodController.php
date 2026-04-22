@@ -20,79 +20,14 @@ use Illuminate\Support\Facades\Http;
 class BVNmodController extends Controller
 {
     /**
-     * Check status of a bvn_modification using Arewa Smart API
+     * Check status of a bvn_modification using Smart Idea API
      */
     public function checkStatus($id)
     {
-        try {
-            $enrollment = AgentService::findOrFail($id);
-            
-            $apiToken = env('AREWA_API_TOKEN');
-            $baseUrl = env('AREWA_BASE_URL');
-            $endpoint = $baseUrl . '/bvn/modification';
-
-            // Identify which ID to use for the check
-            // We prioritize request_id, then ticket_id, then reference
-            $identifiers = array_filter([
-                $enrollment->request_id,
-                $enrollment->ticket_id,
-                $enrollment->reference
-            ]);
-
-            if (empty($identifiers)) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'No valid reference found for this record.',
-                ], 400);
-            }
-
-            $lastError = 'Record not found.';
-            
-            foreach ($identifiers as $ref) {
-                $response = Http::withHeaders([
-                    'Authorization' => 'Bearer ' . $apiToken,
-                    'Accept' => 'application/json',
-                ])->get($endpoint, [
-                    'reference' => $ref,
-                ]);
-
-                if ($response->successful()) {
-                    $data = $response->json();
-                    
-                    if (isset($data['success']) && $data['success'] && isset($data['data'])) {
-                        $apiData = $data['data'];
-                        
-                        // Update enrollment
-                        $enrollment->status = $this->normalizeStatus($apiData['status'] ?? $enrollment->status);
-                        $enrollment->comment = $apiData['reason'] ?? ($apiData['comment'] ?? $enrollment->comment);
-                        
-                        // Handle file_url if provided
-                        if (isset($apiData['file_url']) && $apiData['file_url']) {
-                            $enrollment->file_url = $apiData['file_url'];
-                        }
-                        
-                        $enrollment->save();
-
-                        return response()->json([
-                            'success' => true,
-                            'message' => 'Status updated successfully using reference: ' . $ref,
-                            'data' => [
-                                'status' => $enrollment->status,
-                                'comment' => $enrollment->comment,
-                                'file_url' => $enrollment->file_url,
-                                'updated_at' => $enrollment->updated_at->format('M j, Y g:i A')
-                            ]
-                        ]);
-                    }
-                }
-                
-                $lastError = $response->json('message') ?? 'Record not found.';
-            }
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to fetch status from API: ' . $lastError,
-            ], 400);
+        return response()->json([
+            'success' => false,
+            'message' => 'Manual status check required. This service is now processed manually by administrators.',
+        ], 200);
 
         } catch (\Exception $e) {
             return response()->json([
@@ -194,7 +129,7 @@ class BVNmodController extends Controller
         $request->validate([
             'status' => 'required|in:pending,processing,in-progress,resolved,successful,rejected,failed,query,remark',
             'comment' => 'nullable|string',
-            'file' => 'nullable|file|mimes:pdf,jpg,jpeg,png,doc,docx|max:5120', // 5MB max
+            'file' => 'nullable|file|mimes:pdf,jpg,jpeg,png,doc,docx|max:2048', // 2MB max
             'force_refund' => 'nullable|boolean',
         ]);
 
@@ -227,13 +162,18 @@ class BVNmodController extends Controller
             $enrollment->file_url = $fileUrl;
             $enrollment->save();
 
-            // Handle refund logic if rejected
-            if ($request->status === 'rejected') {
-                // If status was already rejected, we only refund if force_refund is true
-                // If status was NOT rejected before, we refund normally
-                if ($oldStatus !== 'rejected' || $request->force_refund) {
+            // Handle refund logic if rejected or failed
+            if (in_array($request->status, ['rejected', 'failed'])) {
+                // If status was already in a refund-eligible state, we only refund if force_refund is true
+                if (!in_array($oldStatus, ['rejected', 'failed']) || $request->force_refund) {
                     $this->processRefund($enrollment, $request->force_refund);
                 }
+            }
+
+            // User alert on success (update comment if successful)
+            if ($request->status === 'successful') {
+                $enrollment->comment = $request->comment ?? 'Success! Your BVN modification request has been processed successfully.';
+                $enrollment->save();
             }
 
             DB::commit();
@@ -259,10 +199,12 @@ class BVNmodController extends Controller
 
         $role = strtolower($user->role ?? 'default');
 
-        // Check if refund already exists
+        // Check if refund already exists (via description or metadata)
         $refundExists = Transaction::where('type', 'refund')
-            ->where('description', 'LIKE', "%Request ID #{$enrollment->id}%")
-            ->exists();
+            ->where(function($q) use ($enrollment) {
+                $q->where('description', 'LIKE', "%Request ID #{$enrollment->id}%")
+                  ->orWhere('metadata->agent_service_id', $enrollment->id);
+            })->exists();
 
         if ($refundExists && !$forceRefund) {
             throw new \Exception('Refund already processed for this request.');
@@ -275,8 +217,8 @@ class BVNmodController extends Controller
             throw new \Exception('No valid payment amount found for refund.');
         }
 
-        $refundAmount = round($paidAmount * 0.8, 2);
-        $debitAmount = round($paidAmount * 0.2, 2);
+        $refundAmount = round($paidAmount, 2);
+        $debitAmount = 0;
 
         $wallet = Wallet::where('user_id', $user->id)->lockForUpdate()->first();
 
@@ -296,7 +238,7 @@ class BVNmodController extends Controller
             'amount' => $refundAmount,
             'fee' => 0.00,
             'net_amount' => $refundAmount,
-            'description' => "Refund 80% for rejected service [{$enrollment->service_field_name}], Request ID #{$enrollment->id}",
+            'description' => "Full Refund for rejected/failed service [{$enrollment->service_field_name}], Request ID #{$enrollment->id}",
             'type' => 'refund',
             'status' => 'completed',
             'metadata' => json_encode([
@@ -306,9 +248,10 @@ class BVNmodController extends Controller
                 'field_name' => $enrollment->service_field_name ?? null,
                 'user_role' => $role,
                 'total_paid' => $paidAmount,
-                'percentage_refunded' => 80,
+                'percentage_refunded' => 100,
                 'amount_debited_by_system' => $debitAmount,
                 'forced_refund' => $forceRefund,
+                'agent_service_id' => $enrollment->id,
             ]),
         ]);
     }

@@ -200,7 +200,7 @@ class ElectricityController extends Controller
             return redirect()->back()->with('error', 'Insufficient wallet balance! You need ₦' . number_format($payableAmount, 2));
         }
 
-        // 5. Call Arewa Smart Electricity API
+        // 5. Call Smart Idea Electricity API
         try {
             $response = Http::withHeaders([
                 'Authorization' => 'Bearer ' . $this->getApiToken(),

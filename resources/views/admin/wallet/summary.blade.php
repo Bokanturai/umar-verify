@@ -310,12 +310,12 @@
             transform: translateY(-5px);
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
-        .bg-primary-transparent { background-color: rgba(255, 19, 240, 0.1) !important; }
+        .bg-primary-transparent { background-color: rgba(15, 118, 110, 0.1) !important; }
         .bg-info-transparent { background-color: rgba(0, 184, 216, 0.1) !important; }
         .bg-warning-transparent { background-color: rgba(255, 188, 33, 0.1) !important; }
         .bg-success-transparent { background-color: rgba(26, 188, 156, 0.1) !important; }
         .bg-danger-transparent { background-color: rgba(231, 76, 60, 0.1) !important; }
-        .text-primary { color: #FF13F0 !important; }
+        .text-primary { color: #0F766E !important; }
         .avatar-lg i { font-size: 24px; }
         .avatar { display: inline-flex; align-items: center; justify-content: center; }
         .line-height-1 { line-height: 1.2; }

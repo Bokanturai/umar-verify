@@ -1,5 +1,5 @@
 <x-app-layout>
-    <title>Safana Digital - Data Variations Management</title>
+    <title>Smart Idea - Data Variations Management</title>
 
     <div class="content">
         <!-- Page Header -->

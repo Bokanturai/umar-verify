@@ -1,5 +1,5 @@
 <x-app-layout>
-    <title>Zaidi Verify - {{ $title ?? 'Buy Airtime' }}</title>
+    <title>Smart Idea - {{ $title ?? 'Buy Airtime' }}</title>
     {{-- Custom CSS for active state --}}
     @push('styles')
     <style>

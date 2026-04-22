@@ -1,5 +1,5 @@
 <x-app-layout>
-    <title>Safana Digital - {{ $title ?? 'NIN Personalisation Form' }}</title>
+    <title>Smart Idea - {{ $title ?? 'NIN Personalisation Form' }}</title>
     <div class="page-body">
         <div class="container-fluid">
             <div class="page-title mb-3">

@@ -1,5 +1,5 @@
 <x-app-layout>
- <title>Zaidi Verify - {{ $title ?? 'Wallet Funding' }}</title>
+ <title>Smart Idea - {{ $title ?? 'Wallet Funding' }}</title>
 
     <div class="container-fluid py-4 px-0 px-md-4">
         <!-- Page Header -->

@@ -1,5 +1,5 @@
 <x-app-layout>
-    <title>Safana Digital - User Management</title>
+    <title>Smart Idea - User Management</title>
 
     <div class="content">
 

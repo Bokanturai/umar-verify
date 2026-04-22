@@ -3,130 +3,108 @@
 namespace App\Repositories;
 
 use Exception;
+use App\Helpers\noncestrHelper;
+use App\Helpers\signatureHelper;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Http;
 
 class VirtualAccountRepository
 {
-    public function createVirtualAccount($loginUserId)
+
+    public function createVirtualAccount(  $loginUserId)
     {
-        $userDetails = User::where('id', $loginUserId)->first();
 
-        if (!$userDetails) {
-            return ['success' => false, 'message' => 'User not found'];
-        }
+         
+            $userDetails = User::where('id', $loginUserId)->first();
 
-        // Monnify requires BVN and Phone
-        if (empty($userDetails->first_name) || empty($userDetails->last_name) || empty($userDetails->phone_no) || empty($userDetails->email) || empty($userDetails->bvn)) {
-            return ['success' => false, 'message' => 'Please complete your profile details (First Name, Last Name, Phone, Email, BVN) to create a virtual account.'];
-        }
 
-        try {
-            $accessToken = $this->getMonnifyAccessToken();
-            if (!$accessToken) {
-                return ['success' => false, 'message' => 'Failed to authenticate with payment provider.'];
-            }
+            $customer_name = trim($userDetails->first_name . ' ' . $userDetails->last_name);
+            
+            try {
 
-            $baseUrl = rtrim(env('MONNIFY_BASE_URL'), '/');
-            $url = $baseUrl . '/v2/bank-transfer/reserved-accounts';
+                $requestTime = (int) (microtime(true) * 1000);
+                $noncestr = noncestrHelper::generateNonceStr();
+                $accountReference = "F24" . strtoupper(bin2hex(random_bytes(5)));
 
-            $accountReference = 'QS-' . $loginUserId . '-' . uniqid();
+                $data = [
+                    'requestTime' => $requestTime,
+                    'identityType' => 'personal',
+                    'licenseNumber' =>  $userDetails->bvn,
+                    'virtualAccountName' => $customer_name,
+                    'version' => env('VERSION'),
+                    'customerName' => $customer_name,
+                    'email' => $userDetails->email,
+                    'accountReference' => $accountReference,
+                    'nonceStr' => $noncestr,
+                ];
 
-            $data = [
-                'accountReference' => $accountReference,
-                'accountName' => $userDetails->first_name . ' ' . $userDetails->last_name,
-                'currencyCode' => 'NGN',
-                'contractCode' => env('MONNIFY_CONTRACT'),
-                'customerEmail' => $userDetails->email,
-                'customerName' => $userDetails->first_name . ' ' . $userDetails->last_name,
-                'bvn' => $userDetails->bvn,
-                'getAllAvailableBanks' => true,
-            ];
+                 Log::info($data); 
 
-            if (!empty($userDetails->nin)) {
-                $data['nin'] = $userDetails->nin;
-            }
+                $signature = signatureHelper::generate_signature($data, config('keys.private'));
 
-            Log::info('Monnify Reserved Account Request: ', $data);
+                $url = env('BASE_URL3') . 'api/v2/virtual/account/label/create';
+                $token = env('BEARER_TOKEN');
+                $headers = [
+                    'Accept: application/json, text/plain, */*',
+                    'CountryCode: NG',
+                    "Authorization: Bearer $token",
+                    "Signature: $signature",
+                    'Content-Type: application/json',
+                ];
 
-            $response = Http::withToken($accessToken)
-                ->post($url, $data);
+                // Initialize cURL
+                $ch = curl_init();
 
-            Log::info('Monnify Reserved Account Response: ' . $response->body());
+                // Set cURL options
+                curl_setopt($ch, CURLOPT_URL, $url);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_POST, true);
+                curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
 
-            $responseData = $response->json();
+                // Execute request
+                $response = curl_exec($ch);
 
-            if ($response->successful() && ($responseData['requestSuccessful'] ?? false) === true) {
-                $accounts = $responseData['responseBody']['accounts'] ?? [];
-                $reservationReference = $responseData['responseBody']['reservationReference'] ?? null;
-
-                if (empty($accounts)) {
-                    throw new Exception("No account details returned from provider.");
+                Log::info($response);         
+                // Check for cURL errors
+                if (curl_errno($ch)) {
+                    throw new \Exception('cURL Error: ' . curl_error($ch));
                 }
 
-                // Delete existing virtual accounts for this user to avoid confusion if re-creating
-                DB::table('virtual_accounts')->where('user_id', $loginUserId)->delete();
+                // Close cURL session
+                curl_close($ch);
 
-                foreach ($accounts as $account) {
-                    DB::table('virtual_accounts')->insert([
+                // Decode the JSON response to an associative array
+                $response = json_decode($response, true);
+
+                // Check if decoding was successful
+                if ($response === null) {
+                    throw new Exception('Request was not successful.');
+                }
+
+                // Check for success
+                if (isset($response['respCode']) && $response['respCode'] === '00000000') {
+
+                    $res =  DB::table('virtual_accounts')->insert([
                         'user_id' => $loginUserId,
-                        'accountReference' => $accountReference,
-                        'reservation_reference' => $reservationReference,
-                        'accountNo' => $account['accountNumber'],
-                        'accountName' => $account['accountName'],
-                        'bankName' => $account['bankName'],
-                        'bankCode' => $account['bankCode'],
+                        'accountReference' => $response['data']['accountReference'],
+                        'accountNo' => $response['data']['virtualAccountNo'],
+                        'accountName' => $response['data']['virtualAccountName'],
+                        'bankName' => 'PalmPay',
                         'status' => '1',
                         'created_at' => now(),
                         'updated_at' => now(),
                     ]);
+
+                      return ['success' => true, 'message' => 'Virtual Account Created'];
                 }
+            } catch (\Exception $e) {
+                Log::error('Error creating virtual account for user ' . $loginUserId . ': ' . $e->getMessage());
 
-                return ['success' => true, 'message' => 'Virtual Account(s) Created Successfully'];
-            } else {
-                $errorMessage = $responseData['responseMessage'] ?? 'Failed to create virtual account';
-                throw new Exception($errorMessage);
+                return ['success' => false, 'message' => 'Failed to create virtual account'];
             }
-
-        } catch (\Exception $e) {
-            Log::error('Error creating Monnify virtual account for user ' . $loginUserId . ': ' . $e->getMessage());
-            return ['success' => false, 'message' => $e->getMessage()];
-        }
-    }
-
-    /**
-     * Get Monnify Access Token
-     */
-    private function getMonnifyAccessToken()
-    {
-        try {
-            $apiKey = env('MONNIFY_API_KEY');
-            $secretKey = env('MONNIFY_SECRET');
-            $baseUrl = rtrim(env('MONNIFY_BASE_URL'), '/');
-
-            $url = $baseUrl . '/v1/auth/login';
-
-            $response = Http::withHeaders([
-                'Authorization' => 'Basic ' . base64_encode($apiKey . ':' . $secretKey),
-            ])->post($url);
-
-            if ($response->successful()) {
-                $data = $response->json();
-                return $data['responseBody']['accessToken'] ?? null;
-            }
-
-            Log::error('Monnify Auth Error details:', [
-                'status' => $response->status(),
-                'body' => $response->body(),
-                'apiKey' => env('MONNIFY_API_KEY'),
-                'url' => $url
-            ]);
-            return null;
-        } catch (\Exception $e) {
-            Log::error('Monnify Auth Exception: ' . $e->getMessage());
-            return null;
-        }
+        
     }
 }

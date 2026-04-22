@@ -1,5 +1,5 @@
 <x-app-layout>
-    <title>Zaidi Verify - Educational Pin Receipt</title>
+    <title>Smart Idea - Educational Pin Receipt</title>
 
     <div class="page-body">
         <div class="container-fluid">
@@ -106,7 +106,7 @@
                         </div>
                         
                         <div class="card-footer bg-light p-3 text-center">
-                            <p class="text-muted small mb-0">Thank you for using Arewa Smart services.</p>
+                            <p class="text-muted small mb-0">Thank you for using Smart Idea services.</p>
                         </div>
                     </div>
                 </div>

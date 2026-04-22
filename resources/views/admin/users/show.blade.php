@@ -1,5 +1,5 @@
 <x-app-layout>
-    <title>Safana Digital - User Details</title>
+    <title>Smart Idea - User Details</title>
 
     <div class="container-fluid px-4 mt-4">
         <!-- Page Header -->

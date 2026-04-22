@@ -74,7 +74,7 @@ class AirtimeController extends Controller
         $amount  = $request->amount;
         $requestId = RequestIdHelper::generateRequestId();
 
-        // Map network names to Arewa Smart API codes
+        // Map network names to Smart Idea API codes
         $networkCodes = [
             'airtel' => '100',
             'mtn'    => '101',
@@ -121,7 +121,7 @@ class AirtimeController extends Controller
             return redirect()->back()->with('error', 'Insufficient wallet balance! You need ₦' . number_format($payableAmount, 2));
         }
 
-        // 5. Call Arewa Smart Airtime API
+        // 5. Call Smart Idea Airtime API
         try {
             $response = Http::withHeaders([
                 'Authorization' => 'Bearer ' . $this->getApiToken(),
@@ -135,13 +135,13 @@ class AirtimeController extends Controller
             ]);
 
         } catch (\Exception $e) {
-            Log::error('Arewa Smart API Connection Error: ' . $e->getMessage());
+            Log::error('Smart Idea API Connection Error: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Could not connect to airtime provider. Please try again later.');
         }
 
         // 6. Process Response
         $data = $response->json();
-        Log::info('Arewa Smart API Response', ['response' => $data]);
+        Log::info('Smart Idea API Response', ['response' => $data]);
 
         $isSuccessful = false;
         
@@ -194,7 +194,7 @@ class AirtimeController extends Controller
             ]);
         }
 
-        Log::error('Arewa Smart API Response Error', ['response' => $data]);
+        Log::error('Smart Idea API Response Error', ['response' => $data]);
         $errorMessage = $data['message'] ?? 'Airtime purchase failed. Please try again.';
         return redirect()->back()->with('error', $errorMessage);
     }

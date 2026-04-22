@@ -6,7 +6,7 @@
                 <i class="ti ti-shield-check fs-1 text-white opacity-50"></i>
             </div>
             <h2 class="fw-bold text-white mb-3">Secure P2P Transfers</h2>
-            <p class="fs-18 mb-4 opacity-75">Send and receive money instantly within the Arewa Smart network with 0% transaction fees.</p>
+            <p class="fs-18 mb-4 opacity-75">Send and receive money instantly within the Smart Idea network with 0% transaction fees.</p>
             <div class="row g-3 mt-4">
                 <div class="col-4">
                     <div class="p-3 rounded-4 bg-white bg-opacity-10 border border-white border-opacity-10">

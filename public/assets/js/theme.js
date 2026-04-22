@@ -1,4 +1,4 @@
-/* Theme Management Script for Zaidi Verify */
+/* Theme Management Script for Smart Idea */
 
 (function () {
     const themeToggles = document.querySelectorAll('.theme-toggle-trigger, #theme-toggle');

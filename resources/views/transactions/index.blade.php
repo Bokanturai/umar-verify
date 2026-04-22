@@ -1,5 +1,5 @@
 <x-app-layout>
-    <title>Zaidi Verify - Transactions</title>
+    <title>Smart Idea - Transactions</title>
 
     <div class="page-body">
         <div class="container-fluid px-0 px-md-3">
@@ -21,7 +21,7 @@
                     <div class="card shadow-sm border-0 rounded-0 rounded-md-4 h-100">
                         <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center rounded-0 rounded-top-md-4">
                             <h5 class="mb-0 fw-bold text-white"><i class="bi bi-receipt me-2"></i>Transactions</h5>
-                            <span class="badge bg-light text-primary fw-semibold">Zaidi Verify</span>
+                            <span class="badge bg-light text-primary fw-semibold">Smart Idea</span>
                         </div>
                         <div class="card-body">
 

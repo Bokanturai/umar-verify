@@ -1,5 +1,5 @@
 <x-app-layout>
-    <title>Safana Digital - Edit User</title>
+    <title>Smart Idea - Edit User</title>
 
     <div class="content">
         <!-- Page Header -->

@@ -1,5 +1,5 @@
 <x-app-layout>
-    <title>Zaidi Verify - Pay Electricity Bill</title>
+    <title>Smart Idea - Pay Electricity Bill</title>
 
     <div class="row">
         <div class="col-xxl-12 col-xl-12">

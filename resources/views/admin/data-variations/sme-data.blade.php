@@ -1,5 +1,5 @@
 <x-app-layout>
-    <title>Safana Digital - SME Data Management</title>
+    <title>Smart Idea - SME Data Management</title>
 
     <div class="content">
         <!-- Page Header -->

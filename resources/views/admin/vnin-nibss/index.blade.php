@@ -1,5 +1,5 @@
 <x-app-layout>
-   <title>Safana Digital - Vnin to nibss</title>
+   <title>Smart Idea - Vnin to nibss</title>
       <div class="page-body">
     <div class="container-fluid">
       <div class="page-title">

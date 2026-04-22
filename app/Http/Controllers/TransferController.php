@@ -63,7 +63,7 @@ class TransferController extends Controller
         
         $user = Auth::user();
         
-        if ($user->pin == $request->pin) {
+        if (Hash::check($request->pin, $user->pin)) {
             return response()->json(['valid' => true]);
         }
         
@@ -86,7 +86,7 @@ class TransferController extends Controller
         $senderWallet = $sender->wallet;
 
         // Verify PIN (Again for security)
-        if ($sender->pin != $request->pin) {
+        if (!Hash::check($request->pin, $sender->pin)) {
             return back()->with('error', 'Incorrect Transaction PIN.');
         }
 

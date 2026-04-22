@@ -1,5 +1,5 @@
 <x-app-layout>
-    <title>Safana data sub - SME Data Plans</title>
+    <title>Smart Idea - SME Data Plans</title>
 
     <div class="row">
         <div class="col-xxl-12 col-xl-12">

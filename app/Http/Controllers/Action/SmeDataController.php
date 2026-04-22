@@ -145,7 +145,7 @@ class SmeDataController extends Controller
 
         $requestId = RequestIdHelper::generateRequestId();
 
-        // API Call to Arewa Smart
+        // API Call to Smart Idea
         try {
             $response = Http::withHeaders([
                 'Authorization' => 'Bearer ' . $this->getApiToken(),

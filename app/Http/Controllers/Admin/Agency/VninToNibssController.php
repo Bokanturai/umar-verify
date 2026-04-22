@@ -110,7 +110,7 @@ class VninToNibssController extends Controller
         $request->validate([
             'status' => 'required|in:pending,processing,in-progress,resolved,successful,rejected,failed,query,remark',
             'comment' => 'nullable|string',
-            'file' => 'nullable|file|mimes:pdf,jpg,jpeg,png,doc,docx|max:5120', // 5MB max
+            'file' => 'nullable|file|mimes:pdf,jpg,jpeg,png,doc,docx|max:2048', // 2MB max
             'force_refund' => 'nullable|boolean',
         ]);
 
@@ -143,11 +143,17 @@ class VninToNibssController extends Controller
             $enrollment->file_url = $fileUrl;
             $enrollment->save();
 
-            // Handle refund logic if rejected
-            if ($request->status === 'rejected') {
-                if ($oldStatus !== 'rejected' || $request->force_refund) {
+            // Handle refund logic if rejected or failed
+            if (in_array($request->status, ['rejected', 'failed'])) {
+                if (!in_array($oldStatus, ['rejected', 'failed']) || $request->force_refund) {
                     $this->processRefund($enrollment, $request->force_refund);
                 }
+            }
+
+            // User alert on success
+            if ($request->status === 'successful') {
+                $enrollment->comment = $request->comment ?? 'Success! Your VNIN to NIBSS request has been processed successfully.';
+                $enrollment->save();
             }
 
             DB::commit();
@@ -173,10 +179,12 @@ class VninToNibssController extends Controller
 
         $role = strtolower($user->role ?? 'default');
 
-        // Check if refund already exists
+        // Check if refund already exists (via description or metadata)
         $refundExists = Transaction::where('type', 'refund')
-            ->where('description', 'LIKE', "%Request ID #{$enrollment->id}%")
-            ->exists();
+            ->where(function($q) use ($enrollment) {
+                $q->where('description', 'LIKE', "%Request ID #{$enrollment->id}%")
+                  ->orWhere('metadata->agent_service_id', $enrollment->id);
+            })->exists();
 
         if ($refundExists && !$forceRefund) {
             throw new \Exception('Refund already processed for this request.');
@@ -189,8 +197,8 @@ class VninToNibssController extends Controller
             throw new \Exception('No valid payment amount found for refund.');
         }
 
-        $refundAmount = round($paidAmount * 0.8, 2);
-        $debitAmount = round($paidAmount * 0.2, 2);
+        $refundAmount = round($paidAmount, 2);
+        $debitAmount = 0;
 
         $wallet = Wallet::where('user_id', $user->id)->lockForUpdate()->first();
 
@@ -210,7 +218,7 @@ class VninToNibssController extends Controller
             'amount' => $refundAmount,
             'fee' => 0.00,
             'net_amount' => $refundAmount,
-            'description' => "Refund 80% for rejected service [{$enrollment->service_field_name}], Request ID #{$enrollment->id}",
+            'description' => "Full Refund for rejected/failed service [{$enrollment->service_field_name}], Request ID #{$enrollment->id}",
             'type' => 'refund',
             'status' => 'completed',
             'metadata' => json_encode([
@@ -220,9 +228,10 @@ class VninToNibssController extends Controller
                 'field_name' => $enrollment->service_field_name ?? null,
                 'user_role' => $role,
                 'total_paid' => $paidAmount,
-                'percentage_refunded' => 80,
+                'percentage_refunded' => 100,
                 'amount_debited_by_system' => $debitAmount,
                 'forced_refund' => $forceRefund,
+                'agent_service_id' => $enrollment->id,
             ]),
         ]);
     }

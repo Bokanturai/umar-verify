@@ -1,5 +1,5 @@
 <x-app-layout>
-    <title>Zaidi Verify - P2P Balance Transfer</title>
+    <title>Smart Idea - P2P Balance Transfer</title>
 
     <div class="container-fluid py-4 px-0 px-md-4">
         <!-- Page Header -->

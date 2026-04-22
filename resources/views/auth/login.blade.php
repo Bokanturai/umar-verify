@@ -2,7 +2,7 @@
     <div class="text-center mb-4">
         <div class="logo-container">
             <div class="logo-badge">
-                <img src="{{ asset('assets/images/logo/logo.png') }}" alt="imam data sub" style="height: 50px;">
+                <img src="{{ asset('assets/images/logo/logo.png') }}" alt="smart idea" style="height: 50px;">
             </div>
         </div>
         <h2 class="h4 fw-bold text-dark mb-1">Welcome Back</h2>
@@ -75,6 +75,6 @@
 
 
     <div class="text-center mt-5">
-        <p class="text-muted small mb-0">&copy; {{ date('Y') }} Zaidi Verify</p>
+        <p class="text-muted small mb-0">&copy; {{ date('Y') }} Smart Idea</p>
     </div>
 </x-guest-layout>

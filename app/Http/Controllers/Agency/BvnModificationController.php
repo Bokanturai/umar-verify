@@ -9,8 +9,7 @@ use App\Models\Service;
 use App\Models\Wallet;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use App\Http\Controllers\Controller;
@@ -93,7 +92,7 @@ class BvnModificationController extends Controller
             'bvn'            => 'required|string|size:11',
             'nin'            => 'required|string|size:11',
             'affidavit'      => 'required|in:available,not_available',
-            'affidavit_file' => 'nullable|file|mimes:pdf|max:5120',
+            'affidavit_file' => 'nullable|file|mimes:pdf|max:2048',
         ];
 
         if ($request->has('modification_data')) {
@@ -157,53 +156,8 @@ class BvnModificationController extends Controller
             // Debit wallet
             $wallet->decrement('balance', $totalAmount);
 
-            // API Call to Arewa Smart
-            $apiKey = env('AREWA_API_TOKEN');
-            $apiBaseUrl = env('AREWA_BASE_URL');
-            $apiUrl = rtrim($apiBaseUrl, '/') . '/bvn/modification';
 
-            // Prepare description payload as a string
-            $description = $validated['description'] ?? '';
-            if ($request->has('modification_data')) {
-                $m = $request->modification_data;
-                // Name correction codes often need space-separated fields. 
-                // Using common codes for BVN name correction: 022, 003, 007, 69
-                if (in_array($serviceField->field_code, ['022', '003', '007', '69'])) {
-                    $description = trim(($m['first_name'] ?? '') . ' ' . ($m['middle_name'] ?? '') . ' ' . ($m['surname'] ?? ''));
-                } else {
-                    $description = json_encode($m);
-                }
-            }
-
-            try {
-                $response = Http::withToken($apiKey)
-                    ->acceptJson()
-                    ->post($apiUrl, [
-                        'field_code'  => $serviceField->field_code,
-                        'bvn'         => $validated['bvn'],
-                        'nin'         => $validated['nin'],
-                        'description' => $description, // Sent as a string
-                    ]);
-
-                $apiData = $response->json();
-
-                if (!$response->successful() || (isset($apiData['success']) && $apiData['success'] === false)) {
-                    Log::error('Arewa Smart API BVN Modification Failed', [
-                        'response' => $apiData,
-                        'payload' => [
-                            'field_code' => $serviceField->field_code,
-                            'nin' => $validated['nin']
-                        ]
-                    ]);
-                    // If API fails, we could potentially refund, but usually we throw and let the catch handle it
-                    throw new \Exception('API Submission Failed: ' . ($apiData['message'] ?? 'Unknown API error.'));
-                }
-            } catch (\Exception $e) {
-                Log::error('Arewa Smart API Connection Error', ['error' => $e->getMessage()]);
-                throw $e;
-            }
-
-            $transactionRef = $apiData['data']['reference'] ?? ('M1' . date('is') . strtoupper(Str::random(5)));
+            $transactionRef = 'M1' . date('is') . strtoupper(Str::random(5));
             $performedBy = trim("{$user->first_name} {$user->last_name}");
 
             $transaction = Transaction::create([
@@ -223,8 +177,7 @@ class BvnModificationController extends Controller
                     'price_details' => [
                         'modification_fee' => $modificationFee,
                         'affidavit_fee' => $chargeAffidavit ? $affidavitFee : 0,
-                    ],
-                    'api_response' => $apiData
+                    ]
                 ],
             ]);
 
@@ -250,7 +203,7 @@ class BvnModificationController extends Controller
                 'submission_date' => now(),
                 'status' => 'pending',
                 'service_type' => 'bvn_modification',
-                'comment' => $apiData['message'] ?? null,
+                'comment' => null,
                 'performed_by' => $performedBy,
             ]);
 
@@ -312,113 +265,6 @@ class BvnModificationController extends Controller
      */
     public function checkStatus(Request $request, $id)
     {
-        $agentService = AgentService::findOrFail($id);
-
-        $apiKey = env('AREWA_API_TOKEN');
-        $apiBaseUrl = env('AREWA_BASE_URL');
-        $apiUrl = rtrim($apiBaseUrl, '/') . '/bvn/modification';
-
-        try {
-            $response = Http::withToken($apiKey)
-                ->acceptJson()
-                ->get($apiUrl, [
-                    'reference' => $agentService->reference,
-                    // 'bvn' => $agentService->bvn, // Alternative
-                ]);
-
-            $apiResponse = $response->json();
-
-            if ($response->successful() && isset($apiResponse['success']) && $apiResponse['success']) {
-                $data = $apiResponse['data'] ?? [];
-                
-                $updateData = [];
-
-                // Map basic identifiers if present
-                if (isset($data['bvn'])) $updateData['bvn'] = $data['bvn'];
-                if (isset($data['nin'])) $updateData['nin'] = $data['nin'];
-                
-                // Map status
-                if (isset($data['status'])) {
-                    $updateData['status'] = $this->normalizeStatus($data['status']);
-                }
-                
-                // Map comment (check for 'comment' first, then 'reason' as fallback)
-                if (isset($data['comment'])) {
-                    $updateData['comment'] = $data['comment'];
-                } elseif (isset($data['reason'])) {
-                    $updateData['comment'] = $data['reason'];
-                }
-
-                // Map description if provided by API
-                if (isset($data['description'])) {
-                    $updateData['description'] = is_array($data['description']) ? json_encode($data['description']) : $data['description'];
-                }
-
-                // Map file url
-                if (isset($data['file_url'])) {
-                    $updateData['file_url'] = $data['file_url'];
-                }
-
-                if (!empty($updateData)) {
-                    $isFailingNow = isset($updateData['status']) && $updateData['status'] === 'failed' && $agentService->status !== 'failed';
-
-                    if ($isFailingNow) {
-                        DB::beginTransaction();
-                        try {
-                            $agentService->update($updateData);
-
-                            $wallet = Wallet::where('user_id', $agentService->user_id)->lockForUpdate()->first();
-                            if ($wallet) {
-                                $wallet->increment('balance', $agentService->amount);
-
-                                Transaction::create([
-                                    'transaction_ref' => 'REF_' . $agentService->reference,
-                                    'user_id'         => $agentService->user_id,
-                                    'amount'          => $agentService->amount,
-                                    'performed_by'    => 'System Auto-Refund',
-                                    'description'     => "Refund for failed BVN Modification Request",
-                                    'type'            => 'credit',
-                                    'status'          => 'completed',
-                                    'metadata'        => [
-                                        'original_reference' => $agentService->reference,
-                                        'api_reason'         => $updateData['comment'] ?? 'Failed submission',
-                                    ],
-                                ]);
-                            }
-
-                            DB::commit();
-                        } catch (\Exception $e) {
-                            DB::rollBack();
-                            Log::error('BVN Modification Auto Refund Error', ['error' => $e->getMessage(), 'submission_id' => $agentService->id]);
-                            throw $e;
-                        }
-                    } else {
-                        $agentService->update($updateData);
-                    }
-                }
-
-                return back()->with('success', 'Status updated successfully. Current status: ' . ucfirst($agentService->status));
-            }
-
-            return back()->with('error', 'Unable to fetch status: ' . ($apiResponse['message'] ?? 'Unknown error.'));
-
-        } catch (\Exception $e) {
-            Log::error('BVN Modification Status Check Error', ['error' => $e->getMessage()]);
-            return back()->with('error', 'Connection Error: Unable to reach service provider.');
-        }
-    }
-
-
-    private function normalizeStatus($status): string
-    {
-        $s = strtolower(trim((string) $status));
-        
-        return match ($s) {
-            'successful', 'success', 'resolved', 'approved', 'completed' => 'successful',
-            'processing', 'in_progress', 'in-progress', 'submitted', 'new' => 'processing',
-            'failed', 'rejected', 'error', 'declined', 'invalid', 'no record' => 'failed',
-            'query', 'queried' => 'query',
-            default => 'pending',
-        };
+        return back()->with('info', 'Manual status check required. Please contact support or check back later.');
     }
 }

@@ -1,5 +1,5 @@
 <x-app-layout>
-    <title>Zaidi Verify - {{ $title ?? 'Buy Data' }}</title>
+    <title>Smart Idea - {{ $title ?? 'Buy Data' }}</title>
 
     <div class="row">
         <div class="col-xxl-12 col-xl-12">

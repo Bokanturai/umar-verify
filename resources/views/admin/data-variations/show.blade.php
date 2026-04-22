@@ -1,5 +1,5 @@
 <x-app-layout>
-    <title>Safana Digital - Manage {{ $serviceName }} Variations</title>
+    <title>Smart Idea - Manage {{ $serviceName }} Variations</title>
 
     <div class="content">
         <!-- Page Header -->

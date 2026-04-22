@@ -1,5 +1,5 @@
 <x-app-layout>
-    <title>Imam Data Sub- {{ $title ?? 'BVN Modification' }}</title>
+    <title>Smart Idea- {{ $title ?? 'BVN Modification' }}</title>
     <div class="page-body">
         <div class="container-fluid">
             <div class="page-title mb-3">
@@ -122,7 +122,7 @@
                                 <div class="col-12" id="affidavit_upload_wrapper" style="display: none;">
                                     <label class="form-label fw-bold">Upload Affidavit (PDF only)</label>
                                     <input type="file" name="affidavit_file" accept="application/pdf" class="form-control border-primary-subtle">
-                                    <small class="text-muted">Max file size: 5MB</small>
+                                    <small class="text-muted">Max file size: 2MB</small>
                                 </div>
 
                                 <!-- Pricing Info Row -->
@@ -257,7 +257,7 @@
                                                         @if(!in_array($submission->status, ['successful', 'rejected']))
                                                             <a href="{{ route('modification.check', $submission->id) }}" 
                                                                class="btn btn-sm btn-icon btn-outline-success" 
-                                                               title="Sync Status">
+                                                               title="Check for Admin Update">
                                                                 <i class="bi bi-arrow-clockwise"></i>
                                                             </a>
                                                         @elseif($submission->status === 'successful' && $fileUrl)

@@ -73,7 +73,7 @@
                     <div class="card shadow-sm border-0 rounded-3 h-100">
                         <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                             <h5 class="mb-0 fw-bold"><i class="bi bi-clock-history me-2"></i>User Request History</h5>
-                            <span class="badge bg-light text-primary fw-semibold">Arewa Smart</span>
+                            <span class="badge bg-light text-primary fw-semibold">Smart Idea</span>
                         </div>
                         <div class="card-body">
 

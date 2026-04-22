@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>Zaidi Verify - {{ $title ?? 'Welcome Sir All our services is going smothly' }}</title>
+    <title>smart Idea - {{ $title ?? 'Welcome Sir All our services is going smothly' }}</title>
 
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700,800&display=swap" rel="stylesheet" />
@@ -21,10 +21,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <!-- Open Graph / WhatsApp Meta Tags -->
-    <meta property="og:title" content="Zaidi Verify - Innovative Digital Solutions">
+    <meta property="og:title" content="smart Idea - Innovative Digital Solutions">
     <meta property="og:description"
         content="Empowering northern Nigeria through innovative digital solutions and smart technology services.">
-    <meta property="og:image" content="{{ asset('assets/img/logo/logo.png') }}">
+    <meta property="og:image" content="{{ asset('assets/img/logo/favicon.png') }}">
     <meta property="og:url" content="{{ url('/') }}">
     <meta property="og:type" content="website">
 </head>
@@ -38,7 +38,7 @@
     <header>
         <div class="container-fluid header-container px-0 px-md-3">
             <a href="#" class="logo">
-                <img src="{{ asset('assets/img/logo/logo.png') }}" alt="Zaidi Verify"
+                <img src="{{ asset('assets/img/logo/favicon.png') }}" alt="smart Idea"
                     style="height: 50px; margin-right: 10px;">
             </a>
             <div class="mobile-menu">
@@ -59,11 +59,11 @@
 
     <!-- Hero Section -->
     <section class="hero" id="home"
-        style="background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(255, 19, 240, 0.3)), 
+        style="background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(15, 118, 110, 0.3)), 
              url('{{ asset('assets/images/logo/hero.png') }}') no-repeat center center/cover; min-height: 100vh; display: flex; align-items: center;">
         <div class="container hero-content text-center px-0 px-md-3">
             <h1 class="mb-4" data-aos="fade-down" data-aos-duration="1000"
-                style="font-size: 4rem; font-weight: 800; color: #FF13F0; text-shadow: 0 4px 15px rgba(255, 19, 240, 0.3);">
+                style="font-size: 4rem; font-weight: 800; color: #0F766E; text-shadow: 0 4px 15px rgba(15, 118, 110, 0.3);">
                 Agency and Verification Services for Your Business
             </h1>
             <p class="mb-5" data-aos="fade-up" data-aos-delay="200" data-aos-duration="1000"
@@ -77,7 +77,7 @@
                     Get Started
                 </a>
                 <a href="{{route('login')}}" class="btn btn-secondary-outline btn-lg"
-                    style="padding: 15px 40px; font-size: 1.1rem; border-color: #FF13F0; color: #fff;">
+                    style="padding: 15px 40px; font-size: 1.1rem; border-color: #0F766E; color: #fff;">
                     Login Now
                 </a>
             </div>
@@ -99,14 +99,14 @@
         <div class="container px-0 px-md-3" style="position: relative; z-index: 2;">
             <div class="section-title text-center mb-5" data-aos="fade-up">
                 <h4
-                    style="color: #FF13F0; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; font-size: 0.9rem;">
+                    style="color: #0F766E; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; font-size: 0.9rem;">
                     Testimonials</h4>
                 <h2 style="color: #111827; font-weight: 800; font-size: 2.8rem; margin-top: 10px;">Trusted by Leaders
                 </h2>
                 <hr
-                    style="width: 80px; height: 4px; background: #FF13F0; margin: 20px auto; border: none; border-radius: 2px;">
+                    style="width: 80px; height: 4px; background: #0F766E; margin: 20px auto; border: none; border-radius: 2px;">
                 <p class="text-muted" style="max-width: 650px; margin: 0 auto; font-size: 1.15rem;">
-                    See what our partners and clients have to say about their experience working with Zaidi Verify.
+                    See what our partners and clients have to say about their experience working with smart Idea.
                 </p>
             </div>
 
@@ -115,7 +115,7 @@
                 <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
                     <div class="testimonial-card-premium">
                         <div class="quote-icon"><i class="fas fa-quote-left"></i></div>
-                        <p class="review-text">"Zaidi Verify transformed our operations with cutting-edge solutions.
+                        <p class="review-text">"smart Idea transformed our operations with cutting-edge solutions.
                             Their
                             support team is always responsive and professional! Truly a game changer for our business."
                         </p>
@@ -137,14 +137,14 @@
                 <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
                     <div class="testimonial-card-premium">
                         <div class="quote-icon"><i class="fas fa-quote-left"></i></div>
-                        <p class="review-text">"Working with Zaidi Verify has been a seamless experience. Their
+                        <p class="review-text">"Working with smart Idea has been a seamless experience. Their
                             expertise
                             and attention to detail are unmatched. They delivered exactly what we needed, on time."</p>
                         <div class="reviewer-info">
                             <img src="{{ asset('assets/images/avatar/avatar-3.jpg') }}" alt="Fatima Bello">
                             <div>
                                 <h4>Fatima Bello</h4>
-                                <span>Manager, Zaidi Verify Logistics</span>
+                                <span>Manager, smart Idea Logistics</span>
                                 <div class="stars">
                                     <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
                                         class="fas fa-star"></i><i class="fas fa-star"></i>
@@ -158,13 +158,13 @@
                 <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
                     <div class="testimonial-card-premium">
                         <div class="quote-icon"><i class="fas fa-quote-left"></i></div>
-                        <p class="review-text">"The quality of service and support we've received from Zaidi Verify is
+                        <p class="review-text">"The quality of service and support we've received from smart Idea is
                             outstanding. Highly recommended for any business looking to scale digitally."</p>
                         <div class="reviewer-info">
                             <img src="{{ asset('assets/images/avatar/avatar-1.jpg') }}" alt="Emeka Johnson">
                             <div>
                                 <h4>Emeka Johnson</h4>
-                                <span>IT Director, Zaidi Verify Ltd</span>
+                                <span>IT Director, smart Idea Ltd</span>
                                 <div class="stars">
                                     <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
                                         class="fas fa-star"></i><i class="fas fa-star"></i>
@@ -190,7 +190,7 @@
             <div class="row g-5">
                 <!-- Company Info -->
                 <div class="col-lg-4 col-md-6">
-                    <h2 style="color: #FF13F0; font-weight: 800; margin-bottom: 25px; font-size: 2rem;">Zaidi Verify
+                    <h2 style="color: #0F766E; font-weight: 800; margin-bottom: 25px; font-size: 2rem;">smart Idea
                     </h2>
                     <p style="color: rgba(255,255,255,0.7); line-height: 1.8; margin-bottom: 30px;">
                         Providing innovative technology solutions to help businesses thrive in the digital world. We are
@@ -208,8 +208,8 @@
                 <div class="col-lg-2 col-md-6">
                     <h3
                         style="color: #fff; font-size: 1.2rem; font-weight: 700; margin-bottom: 25px; display: inline-block;">
-                        ZAIDI VERIFY</h3>
-                    <div style="width: 40px; height: 3px; background: #FF13F0; margin-bottom: 20px;"></div>
+                        smart Idea</h3>
+                    <div style="width: 40px; height: 3px; background: #0F766E; margin-bottom: 20px;"></div>
                     <ul class="footer-links list-unstyled">
                         <li><a href="#home">Home</a></li>
                         <li><a href="#services">Services</a></li>
@@ -225,7 +225,7 @@
                     <h3
                         style="color: #fff; font-size: 1.2rem; font-weight: 700; margin-bottom: 25px; display: inline-block;">
                         Our Services</h3>
-                    <div style="width: 40px; height: 3px; background: #FF13F0; margin-bottom: 20px;"></div>
+                    <div style="width: 40px; height: 3px; background: #0F766E; margin-bottom: 20px;"></div>
                     <ul class="footer-links list-unstyled">
                         <li><a href="#services">NIN Services</a></li>
                         <li><a href="#services">BVN Services</a></li>
@@ -240,21 +240,21 @@
                     <h3
                         style="color: #fff; font-size: 1.2rem; font-weight: 700; margin-bottom: 25px; display: inline-block;">
                         Contact Us</h3>
-                    <div style="width: 40px; height: 3px; background: #FF13F0; margin-bottom: 20px;"></div>
+                    <div style="width: 40px; height: 3px; background: #0F766E; margin-bottom: 20px;"></div>
                     <ul class="footer-contact list-unstyled">
                         <li style="margin-bottom: 20px; display: flex;">
-                            <div style="width: 30px; color: #FF13F0; margin-top: 2px;"><i
+                            <div style="width: 30px; color: #0F766E; margin-top: 2px;"><i
                                     class="fas fa-map-marker-alt"></i></div>
                             <span style="color: rgba(255,255,255,0.8);">Adamawa state yola beside gombi road Adamawa
                                 Nigeria</span>
                         </li>
                         <li style="margin-bottom: 20px; display: flex;">
-                            <div style="width: 30px; color: #FF13F0; margin-top: 2px;"><i class="fas fa-phone"></i>
+                            <div style="width: 30px; color: #0F766E; margin-top: 2px;"><i class="fas fa-phone"></i>
                             </div>
                             <span style="color: rgba(255,255,255,0.8);">+2348165625614</span>
                         </li>
                         <li style="margin-bottom: 20px; display: flex;">
-                            <div style="width: 30px; color: #FF13F0; margin-top: 2px;"><i class="fas fa-envelope"></i>
+                            <div style="width: 30px; color: #0F766E; margin-top: 2px;"><i class="fas fa-envelope"></i>
                             </div>
                             <span style="color: rgba(255,255,255,0.8);">zaidutasiu14@gmail.com</span>
                         </li>
@@ -265,8 +265,8 @@
             <hr style="border-color: rgba(255,255,255,0.1); margin: 60px 0 30px;">
 
             <div class="footer-bottom text-center">
-                <p style="color: rgba(255,255,255,0.6); margin: 0;">&copy; {{ date('Y') }} Zaidi Verify. All rights
-                    reserved. | Designed with <i class="fas fa-heart" style="color: #FF13F0;"></i> by Zaidi Verify Team.
+                <p style="color: rgba(255,255,255,0.6); margin: 0;">&copy; {{ date('Y') }} smart Idea. All rights
+                    reserved. | Designed with <i class="fas fa-heart" style="color: #0F766E;"></i> by smart Idea Team.
                 </p>
             </div>
         </div>
@@ -306,18 +306,18 @@
                 </div>
                 <div class="modal-body">
                     <div class="text-center mb-4">
-                        <img src="{{ asset('assets/img/logo/logo.png') }}" alt="Logo" style="height: 60px;">
-                        <h4 class="mt-3 text-dark">Zaidi Verify Data Privacy Commitment</h4>
+                        <img src="{{ asset('assets/img/logo/favicon.png') }}" alt="Logo" style="height: 60px;">
+                        <h4 class="mt-3 text-dark">smart Idea Data Privacy Commitment</h4>
                     </div>
 
                     <p class="lead text-center mb-4" style="font-size: 1.1rem; color: #555;">
-                        At Zaidi Verify, we are committed to protecting your personal data in compliance with the
+                        At smart Idea, we are committed to protecting your personal data in compliance with the
                         <strong>Nigeria Data Protection Regulation (NDPR) 2019</strong>.
                     </p>
 
                     <div class="policy-section">
                         <h5>1. Introduction</h5>
-                        <p>This Privacy Policy explains how Zaidi Verify collects, uses, and protects your personal
+                        <p>This Privacy Policy explains how smart Idea collects, uses, and protects your personal
                             information when you use our digital solutions, including our website, mobile applications,
                             and NIN/BVN services.</p>
                     </div>

@@ -45,4 +45,10 @@ return [
         'secret' => env('MONNIFY_SECRET'),
     ],
 
+    'validator' => [
+        'domain' => env('Domain'),
+        'bearer' => env('BEARER'),
+        'version' => env('API_VERSION'),
+    ],
+
 ];

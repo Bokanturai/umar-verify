@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Log;
 class ValidationController extends Controller
 {
     /**
-     * Check status of a validation request using Arewa Smart API
+     * Check status of a validation request using Smart Idea API
      */
     public function checkStatus($id)
     {
@@ -195,12 +195,7 @@ class ValidationController extends Controller
             $enrollment->comment = $request->comment;
             $enrollment->save();
 
-            // Handle refund logic if rejected
-            if ($request->status === 'rejected') {
-                if ($oldStatus !== 'rejected' || $request->force_refund) {
-                    $this->processRefund($enrollment, $request->force_refund);
-                }
-            }
+            // No refund for NIN Validation
 
             DB::commit();
             return redirect()->route('admin.validation.index')
@@ -225,72 +220,6 @@ class ValidationController extends Controller
             ->values();
     }
 
-    /**
-     * Handle refund when a request is rejected
-     */
-    private function processRefund($enrollment, $forceRefund = false)
-    {
-        $user = User::find($enrollment->user_id);
-
-        if (!$user) {
-            throw new \Exception('User not found.');
-        }
-
-        $role = strtolower($user->role ?? 'default');
-
-        // Check if refund already exists
-        $refundExists = Transaction::where('type', 'refund')
-            ->where('description', 'LIKE', "%Request ID #{$enrollment->id}%")
-            ->exists();
-
-        if ($refundExists && !$forceRefund) {
-            throw new \Exception('Refund already processed for this request.');
-        }
-
-        // Use the actual amount paid by the user stored in the enrollment record
-        $paidAmount = $enrollment->amount;
-
-        if (!$paidAmount || $paidAmount <= 0) {
-            throw new \Exception('No valid payment amount found for refund.');
-        }
-
-        $refundAmount = round($paidAmount * 0.8, 2);
-        $debitAmount = round($paidAmount * 0.2, 2);
-
-        $wallet = Wallet::where('user_id', $user->id)->lockForUpdate()->first();
-
-        if (!$wallet) {
-            throw new \Exception('Wallet not found for user.');
-        }
-
-        // Update wallet balance
-        $wallet->balance += $refundAmount;
-        $wallet->save();
-
-        // Create refund transaction
-        Transaction::create([
-            'transaction_ref' => strtoupper(Str::random(12)),
-            'user_id' => $user->id,
-            'performed_by' => Auth::user()->first_name . ' ' . (Auth::user()->last_name ?? ''),
-            'amount' => $refundAmount,
-            'fee' => 0.00,
-            'net_amount' => $refundAmount,
-            'description' => "Refund 80% for rejected service [{$enrollment->service_field_name}], Request ID #{$enrollment->id}",
-            'type' => 'refund',
-            'status' => 'completed',
-            'metadata' => json_encode([
-                'service_id' => $enrollment->service_id,
-                'service_field_id' => $enrollment->service_field_id,
-                'field_code' => $enrollment->field_code,
-                'field_name' => $enrollment->service_field_name ?? null,
-                'user_role' => $role,
-                'total_paid' => $paidAmount,
-                'percentage_refunded' => 80,
-                'amount_debited_by_system' => $debitAmount,
-                'forced_refund' => $forceRefund,
-            ]),
-        ]);
-    }
 
     private function cleanApiResponse($response): string
     {

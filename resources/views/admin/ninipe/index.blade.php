@@ -1,5 +1,5 @@
 <x-app-layout>
- <title>Safana Digital - NIN - IPE</title>
+ <title>Smart Idea - NIN - IPE</title>
       <div class="page-body">
     <div class="container-fluid">
       <div class="page-title">

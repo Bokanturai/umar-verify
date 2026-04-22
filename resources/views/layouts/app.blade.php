@@ -13,8 +13,8 @@
   
 
     <!-- Favicon -->
-    <link rel="icon" href="{{ asset('assets/img/logo/logo.png') }}" type="image/x-icon" />
-    <link rel="shortcut icon" href="{{ asset('assets/img/logo/logo.png') }}" type="image/x-icon" />
+    <link rel="icon" href="{{ asset('assets/img/logo/favicon.png') }}" type="image/x-icon" />
+    <link rel="shortcut icon" href="{{ asset('assets/img/logo/favicon.png') }}" type="image/x-icon" />
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.min.css') }}">
@@ -83,7 +83,7 @@
                             <p class="mb-0 small">
                                 ©
                                 <script>document.write(new Date().getFullYear())</script>
-                                <strong class="text-white"> Zaidi Verify </strong>.
+                                <strong class="text-white"> Smart Idea </strong>.
                                 All Rights Reserved.
                             </p>
                         </div>
