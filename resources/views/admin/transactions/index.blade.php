@@ -416,7 +416,8 @@
                                 </div>
                                 <div class="col-6">
                                     <label class="text-muted small text-uppercase fw-bold d-block mb-1">Performed By</label>
-                                    <span class="text-dark fw-medium fs-13">{{ $transaction->performer->fullname ?? 'System' }}</span>
+                                    <span class="text-dark fw-medium fs-13 d-block">{{ $transaction->performer->fullname ?? $transaction->performed_by ?? 'System' }}</span>
+                                    <span class="text-muted fs-12">{{ $transaction->user->email ?? 'unknown' }}</span>
                                 </div>
                                 <div class="col-12">
                                     <label class="text-muted small text-uppercase fw-bold d-block mb-1">Description</label>
