@@ -28,20 +28,23 @@ class ProcessVatCharge implements ShouldQueue
         $chargeDesc = 'VAT charge on transaction';
         $chargeRef = 'VAT-' . strtoupper(Str::random(10));
 
-        $wallet = Wallet::where('user_id', $this->userId)->first();
-        if ($wallet) {
-            $wallet->decrement('balance', $chargeAmount);
+        \DB::transaction(function () use ($chargeAmount, $chargeDesc, $chargeRef) {
+            $wallet = Wallet::where('user_id', $this->userId)->lockForUpdate()->first();
+            if ($wallet) {
+                $wallet->decrement('balance', $chargeAmount);
+                $wallet->decrement('available_balance', $chargeAmount);
 
-            Transaction::create([
-                'user_id' => $this->userId,
-                'transaction_ref' => $chargeRef,
-                'type' => 'debit',
-                'amount' => $chargeAmount,
-                'description' => $chargeDesc,
-                'status' => 'completed',
-                'performed_by' => 'System',
-                'metadata' => ['type' => 'vat_charge'],
-            ]);
-        }
+                Transaction::create([
+                    'user_id' => $this->userId,
+                    'transaction_ref' => $chargeRef,
+                    'type' => 'debit',
+                    'amount' => $chargeAmount,
+                    'description' => $chargeDesc,
+                    'status' => 'completed',
+                    'performed_by' => 'System',
+                    'metadata' => ['type' => 'vat_charge'],
+                ]);
+            }
+        });
     }
 }

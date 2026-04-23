@@ -41,10 +41,6 @@ return [
         ],
     ],
 
-    'monnify' => [
-        'secret' => env('MONNIFY_SECRET'),
-    ],
-
     'validator' => [
         'domain' => env('Domain'),
         'bearer' => env('BEARER'),

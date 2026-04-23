@@ -72,7 +72,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::post('/monnify/webhook', [PaymentWebhookController::class, 'handleWebhook'])
+Route::post('/palmpay/webhook', [PaymentWebhookController::class, 'handleWebhook'])
     ->middleware('throttle:60,1');
 
 /*

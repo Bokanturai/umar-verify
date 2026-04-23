@@ -11,6 +11,7 @@ use App\Models\VirtualAccount;
 use App\Models\Wallet;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
@@ -63,43 +64,45 @@ class PaymentWebhookController extends Controller
 
     private function processReservedAccountTransaction($payload)
     {
-        // transType 41 is Payout (Disbursement), others are Payin (Collections)
-        if (($payload['transType'] ?? null) == 41) {
-            Log::info('[PAYOUT Webhook]:', ['payload' => $payload]);
-            $this->handlePayout($payload);
-        } else {
-            Log::info('[PAYIN Webhook]:', ['payload' => $payload]);
-
-            $virtualAccountNo = $payload['virtualAccountNo'] ?? null;
-            $orderNo          = $payload['merchantOrderNo'] ?? $payload['orderNo'] ?? null;
-            $amountPaid       = isset($payload['orderAmount']) ? $payload['orderAmount'] / 100 : 0;
-            $payerBankName    = $payload['payerBankName'] ?? '';
-            $payerAccountName = $payload['payerAccountName'] ?? '';
-            $service_description = 'Your wallet has been credited with ₦' . number_format($amountPaid, 2);
-            $orderStatus      = $payload['orderStatus'] ?? null;
-
-            if (!$virtualAccountNo || !$orderNo) {
-                Log::warning('Webhook missing accountNo or orderNo', ['payload' => $payload]);
-                return;
-            }
-
-            $virtualAccount = VirtualAccount::where('accountNo', $virtualAccountNo)->first();
-
-            if ($virtualAccount) {
-                $this->createTransactionForReservedAccount(
-                    $virtualAccount->user_id,
-                    $orderNo,
-                    $amountPaid,
-                    $payerBankName,
-                    $payerAccountName,
-                    $service_description,
-                    $orderStatus,
-                    $payload
-                );
+        DB::transaction(function () use ($payload) {
+            // transType 41 is Payout (Disbursement), others are Payin (Collections)
+            if (($payload['transType'] ?? null) == 41) {
+                Log::info('[PAYOUT Webhook]:', ['payload' => $payload]);
+                $this->handlePayout($payload);
             } else {
-                Log::warning('Virtual account not found for accountNo: '.$virtualAccountNo, ['payload' => $payload]);
+                Log::info('[PAYIN Webhook]:', ['payload' => $payload]);
+
+                $virtualAccountNo = $payload['virtualAccountNo'] ?? null;
+                $orderNo          = $payload['merchantOrderNo'] ?? $payload['orderNo'] ?? null;
+                $amountPaid       = isset($payload['orderAmount']) ? $payload['orderAmount'] / 100 : 0;
+                $payerBankName    = $payload['payerBankName'] ?? '';
+                $payerAccountName = $payload['payerAccountName'] ?? '';
+                $service_description = 'Your wallet has been credited with ₦' . number_format($amountPaid, 2);
+                $orderStatus      = $payload['orderStatus'] ?? null;
+
+                if (!$virtualAccountNo || !$orderNo) {
+                    Log::warning('Webhook missing accountNo or orderNo', ['payload' => $payload]);
+                    return;
+                }
+
+                $virtualAccount = VirtualAccount::where('accountNo', $virtualAccountNo)->first();
+
+                if ($virtualAccount) {
+                    $this->createTransactionForReservedAccount(
+                        $virtualAccount->user_id,
+                        $orderNo,
+                        $amountPaid,
+                        $payerBankName,
+                        $payerAccountName,
+                        $service_description,
+                        $orderStatus,
+                        $payload
+                    );
+                } else {
+                    Log::warning('Virtual account not found for accountNo: '.$virtualAccountNo, ['payload' => $payload]);
+                }
             }
-        }
+        });
     }
 
     private function handlePayout($payload)
@@ -122,33 +125,47 @@ class PaymentWebhookController extends Controller
 
     private function createTransactionForReservedAccount($userId, $orderNo, $amountPaid, $payerBankName, $payerAccountName, $service_description, $orderStatus, $payload)
     {
-        $transaction = Transaction::where('transaction_ref', $orderNo)->first();
+        $transaction = Transaction::where('transaction_ref', $orderNo)->lockForUpdate()->first();
 
         if ($transaction) {
+            if ($transaction->status === 'completed') {
+                Log::info("Transaction {$orderNo} already completed. Skipping.");
+                return;
+            }
+
             $this->updateTransaction($orderNo, $amountPaid, $payerBankName, $payerAccountName, $service_description, $orderStatus, $userId, $payload);
+            
+            if ($orderStatus == 1) {
+                $this->processSuccessFunding($userId, $amountPaid, $orderNo, $payerBankName, $payload);
+            }
         } else {
             // Only credit wallet if status is successful ( PalmsPay usually 1 for success)
             if ($orderStatus == 1 || $orderStatus === null) {
                 $this->insertTransaction($userId, $orderNo, $amountPaid, $payerAccountName, $payerBankName, $service_description, $payload);
-                $this->updateWalletBalance($userId, $amountPaid);
-
-                // Check for 10,000 threshold logic
-                if ($amountPaid >= 10000) {
-                    $chargeAmount = 50;
-                    $chargeDesc = 'transaction lavy charge';
-                    $chargeRef = 'CHG-' . strtoupper(Str::random(10));
-                    
-                    $this->debitWallet($userId, $chargeAmount, $chargeDesc, $chargeRef, $orderNo);
-
-                    // Schedule VAT Charge (15 Naira) after 1 minute
-                    ProcessVatCharge::dispatch($userId)->delay(now()->addMinute());
-                }
-
-                $this->sendNotificationAndEmail($userId, $amountPaid, $orderNo, $payerBankName, 'Topup');
+                $this->processSuccessFunding($userId, $amountPaid, $orderNo, $payerBankName, $payload);
             } else {
                 Log::info("Transaction {$orderNo} skipped due to status: {$orderStatus}");
             }
         }
+    }
+
+    private function processSuccessFunding($userId, $amountPaid, $orderNo, $payerBankName, $payload)
+    {
+        $this->updateWalletBalance($userId, $amountPaid);
+
+        // Check for 10,000 threshold logic
+        if ($amountPaid >= 10000) {
+            $chargeAmount = 50;
+            $chargeDesc = 'transaction lavy charge';
+            $chargeRef = 'CHG-' . strtoupper(Str::random(10));
+            
+            $this->debitWallet($userId, $chargeAmount, $chargeDesc, $chargeRef, $orderNo);
+
+            // Schedule VAT Charge (15 Naira) after 1 minute
+            ProcessVatCharge::dispatch($userId)->delay(now()->addMinute());
+        }
+
+        $this->sendNotificationAndEmail($userId, $amountPaid, $orderNo, $payerBankName, 'Topup');
     }
 
     private function updateTransaction($orderNo, $amountPaid, $payerBankName, $payerAccountName, $service_description, $orderStatus, $userId, $payload)
