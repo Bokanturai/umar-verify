@@ -275,13 +275,16 @@
                                                         class="avatar avatar-xs bg-soft-info text-info rounded-circle me-2 d-flex align-items-center justify-content-center">
                                                         <i class="ti ti-user fs-12"></i>
                                                     </div>
-                                                    <span class="text-dark fw-medium fs-13">
-                                                        @if($transaction->performer)
-                                                            {{ $transaction->performer->fullname }}
-                                                        @else
-                                                        {{ $transaction->performed_by ?? 'Auto' }}
-                                                        @endif
-                                                    </span>
+                                                    <div class="d-flex flex-column">
+                                                        <span class="text-dark fw-medium fs-13">
+                                                            @if($transaction->performer)
+                                                                {{ $transaction->performer->fullname }}
+                                                            @else
+                                                            {{ $transaction->performed_by ?? 'Auto' }}
+                                                            @endif
+                                                        </span>
+                                                        <small class="text-muted fs-11">{{ $transaction->user->email ?? '' }}</small>
+                                                    </div>
                                                 </div>
                                             </td>
 
@@ -412,7 +415,10 @@
                                 </div>
                                 <div class="col-6">
                                     <label class="text-muted small text-uppercase fw-bold d-block mb-1">User (Owner)</label>
-                                    <span class="text-dark fw-medium fs-13">{{ $transaction->user->fullname ?? 'N/A' }}</span>
+                                    <div class="d-flex flex-column">
+                                        <span class="text-dark fw-medium fs-13">{{ $transaction->user->fullname ?? 'N/A' }}</span>
+                                        <small class="text-muted fs-12">{{ $transaction->user->email ?? '' }}</small>
+                                    </div>
                                 </div>
                                 <div class="col-6">
                                     <label class="text-muted small text-uppercase fw-bold d-block mb-1">Performed By</label>
